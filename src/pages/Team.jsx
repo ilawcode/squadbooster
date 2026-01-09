@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../utils';
 import Layout from '../components/Layout';
 import Avatar from '../components/Avatar';
-import { Add, Close, People } from '@mui/icons-material';
+import { Add, Close, People, Email, Badge, CalendarMonth } from '@mui/icons-material';
 
 const Team = () => {
     const [members, setMembers] = useState([]);
@@ -46,67 +46,98 @@ const Team = () => {
         }
     };
 
+    const getRoleBadgeColor = (role) => {
+        switch (role) {
+            case 'Product Owner': return { bg: 'var(--warning-light)', color: 'var(--warning)' };
+            case 'Scrum Master': return { bg: 'var(--primary-100)', color: 'var(--primary)' };
+            case 'Tech Lead': return { bg: 'var(--danger-light)', color: 'var(--danger)' };
+            case 'Designer': return { bg: '#fae8ff', color: '#a855f7' };
+            default: return { bg: 'var(--gray-100)', color: 'var(--gray-600)' };
+        }
+    };
+
     return (
         <Layout>
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+            {/* Page Header */}
+            <div className="page-header">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-                        <People className="text-primary-600" sx={{ fontSize: 32 }} /> Takım Üyeleri
+                    <h1 className="page-title">
+                        <People style={{ fontSize: 32, color: 'var(--primary)' }} />
+                        Takım Üyeleri
                     </h1>
                     <p className="page-subtitle">Squad'ını güçlendiren kahramanlar.</p>
                 </div>
-                <button className="btn btn-primary shadow-lg shadow-primary-500/20 px-4 py-2.5 h-auto flex items-center gap-2" onClick={() => setShowModal(true)}>
-                    <Add sx={{ fontSize: 20 }} />
-                    <span className="hidden md:inline">Üye Ekle</span>
+                <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+                    <Add style={{ fontSize: 20 }} />
+                    <span>Üye Ekle</span>
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {members.map(member => (
-                    <div key={member._id} className="bg-white rounded-xl p-6 flex flex-col items-center text-center shadow-sm border border-gray-100 hover:shadow-lg transition-all hover:-translate-y-1">
-                        <Avatar name={member.name} color={member.color} size="xl" className="mb-4 text-2xl" />
-                        <h3 className="text-lg font-bold mb-1 text-gray-900">{member.name}</h3>
-                        <span className="text-[10px] uppercase tracking-wider font-bold text-primary-600 bg-primary-50 border border-primary-100 px-2 py-0.5 rounded-full mb-4">
-                            {member.role}
-                        </span>
-                        <div className="text-xs text-gray-400 mt-auto pt-4 border-t border-gray-50 w-full">
-                            Son görülme: {new Date(member.lastLogin).toLocaleDateString('tr-TR')}
+            {/* Team Grid - 3 Columns */}
+            <div className="team-grid">
+                {members.map(member => {
+                    const roleStyle = getRoleBadgeColor(member.role);
+                    return (
+                        <div key={member._id} className="team-card">
+                            <div className="team-card-avatar">
+                                <div
+                                    className="avatar avatar-lg"
+                                    style={{ background: member.color, width: 72, height: 72, fontSize: '1.5rem' }}
+                                >
+                                    {member.name?.charAt(0).toUpperCase()}
+                                </div>
+                            </div>
+                            <h3 className="team-card-name">{member.name}</h3>
+                            <span
+                                className="team-card-role"
+                                style={{ background: roleStyle.bg, color: roleStyle.color }}
+                            >
+                                {member.role}
+                            </span>
+                            <div className="team-card-meta">
+                                <CalendarMonth style={{ fontSize: 14 }} />
+                                <span>Katılım: {new Date(member.lastLogin).toLocaleDateString('tr-TR')}</span>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
-            {/* Modern Modal */}
+            {/* Add Member Modal */}
             {showModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setShowModal(false)}>
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-scaleIn flex flex-col" onClick={e => e.stopPropagation()}>
-                        <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50">
-                            <h3 className="text-xl font-bold flex items-center gap-2">
-                                <People className="text-primary-500" sx={{ fontSize: 24 }} /> Yeni Üye
+                <div className="modal-overlay" onClick={() => setShowModal(false)}>
+                    <div className="modal animate-slide-up" onClick={e => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h3 className="modal-title flex items-center gap-2">
+                                <People style={{ fontSize: 24, color: 'var(--primary)' }} />
+                                Yeni Üye Ekle
                             </h3>
-                            <button onClick={() => setShowModal(false)} className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 rounded-full transition-all shadow-sm hover:shadow-md">
-                                <Close sx={{ fontSize: 20 }} />
+                            <button
+                                onClick={() => setShowModal(false)}
+                                className="btn btn-ghost btn-icon"
+                            >
+                                <Close style={{ fontSize: 20 }} />
                             </button>
                         </div>
 
-                        <form onSubmit={handleInvite} className="p-6 space-y-5">
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-1.5">İsim Soyisim</label>
-                                <input
-                                    type="text"
-                                    className="form-input w-full border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-100 focus:border-primary-500"
-                                    placeholder="Ad Soyad"
-                                    value={formData.name}
-                                    onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                    required
-                                />
-                            </div>
+                        <form onSubmit={handleInvite}>
+                            <div className="modal-body">
+                                <div className="form-group">
+                                    <label className="form-label">İsim Soyisim</label>
+                                    <input
+                                        type="text"
+                                        className="form-input"
+                                        placeholder="Örn: Ahmet Yılmaz"
+                                        value={formData.name}
+                                        onChange={e => setFormData({ ...formData, name: e.target.value })}
+                                        required
+                                    />
+                                </div>
 
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-1.5">Rol</label>
-                                <div className="relative">
+                                <div className="form-group">
+                                    <label className="form-label">Rol</label>
                                     <select
-                                        className="form-select w-full border-gray-300 rounded-lg px-4 py-2.5 appearance-none"
+                                        className="form-select"
                                         value={formData.role}
                                         onChange={e => setFormData({ ...formData, role: e.target.value })}
                                     >
@@ -116,13 +147,23 @@ const Team = () => {
                                         <option value="Tech Lead">Tech Lead</option>
                                         <option value="Designer">Designer</option>
                                     </select>
-                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">▼</div>
                                 </div>
                             </div>
 
-                            <div className="pt-4 flex justify-end gap-3 border-t border-gray-100 mt-2">
-                                <button type="button" className="btn btn-ghost px-5 py-2.5 rounded-lg font-medium" onClick={() => setShowModal(false)}>İptal</button>
-                                <button type="submit" className="btn btn-primary px-6 py-2.5 rounded-lg shadow-lg shadow-primary-500/30 hover:shadow-primary-500/40 hover:-translate-y-0.5 transition-all">Ekle</button>
+                            <div className="modal-footer">
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={() => setShowModal(false)}
+                                >
+                                    İptal
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="btn btn-primary"
+                                >
+                                    Üye Ekle
+                                </button>
                             </div>
                         </form>
                     </div>

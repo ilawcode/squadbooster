@@ -947,6 +947,120 @@ body {
 }
 
 /* ============================================
+   TEAM GRID & CARDS
+   ============================================ */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-8);
+}
+
+@media (max-width: 1024px) {
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .team-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.team-card {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  border: 1px solid var(--gray-200);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: all var(--transition);
+}
+
+.team-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+  border-color: var(--gray-300);
+}
+
+.team-card-avatar {
+  margin-bottom: var(--space-5);
+}
+
+.team-card-name {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: var(--space-2);
+}
+
+.team-card-role {
+  display: inline-block;
+  padding: var(--space-1) var(--space-3);
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-5);
+}
+
+.team-card-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.75rem;
+  color: var(--gray-400);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--gray-100);
+  width: 100%;
+  justify-content: center;
+}
+
+/* ============================================
+   PARTICIPANT PICKER (Rituals Modal)
+   ============================================ */
+.participant-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  max-height: 160px;
+  overflow-y: auto;
+  padding: var(--space-3);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  background: var(--gray-50);
+}
+
+.participant-chip {
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition);
+  border: 1px solid var(--gray-200);
+  background: white;
+  color: var(--gray-600);
+  user-select: none;
+}
+
+.participant-chip:hover {
+  border-color: var(--primary-light);
+  color: var(--primary);
+}
+
+.participant-chip.selected {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary-dark);
+  box-shadow: var(--shadow-sm);
+}
+
+
+/* ============================================
    TABS / FILTERS
    ============================================ */
 .tabs {
