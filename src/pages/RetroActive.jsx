@@ -58,10 +58,10 @@ const SortableItem = ({ id, card, onVote, step, onDelete, currentUser }) => {
                                 e.stopPropagation();
                                 if (window.confirm('Bu kartı silmek istediğine emin misin?')) onDelete(card._id);
                             }}
-                            className="p-1.5 text-muted hover:text-danger-500 hover:bg-danger-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                            className="p-2 text-danger-600 bg-danger-50 hover:bg-danger-100 hover:text-danger-700 rounded-lg transition-all opacity-0 group-hover:opacity-100 shadow-sm hover:shadow-md transform hover:scale-105"
                             title="Kartı Sil"
                         >
-                            <Trash2 size={14} />
+                            <Trash2 size={15} />
                         </button>
                     )}
                 </div>
@@ -74,8 +74,8 @@ const SortableItem = ({ id, card, onVote, step, onDelete, currentUser }) => {
                         onVote(card._id);
                     }}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold transition-all transform active:scale-95 ml-2 ${card.isVoted
-                            ? 'bg-primary-100 text-primary-700 shadow-inner ring-1 ring-primary-200'
-                            : 'bg-bg-tertiary text-text-secondary hover:bg-border-light'
+                        ? 'bg-primary-100 text-primary-700 shadow-inner ring-1 ring-primary-200'
+                        : 'bg-bg-tertiary text-text-secondary hover:bg-border-light'
                         }`}
                 >
                     <ThumbsUp size={14} className={card.isVoted ? 'fill-current' : ''} />
@@ -406,7 +406,7 @@ const RetroActive = () => {
                             <h3 className="text-xl font-bold flex items-center gap-2">
                                 <Layers className="text-primary-500" /> Aksiyon Oluştur
                             </h3>
-                            <button onClick={() => setActionModal(null)} className="p-2 hover:bg-gray-200 rounded-full transition-colors text-gray-500 hover:text-gray-800">
+                            <button onClick={() => setActionModal(null)} className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 rounded-full transition-all shadow-sm hover:shadow-md">
                                 <X size={20} />
                             </button>
                         </div>
