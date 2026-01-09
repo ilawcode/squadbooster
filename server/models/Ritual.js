@@ -44,20 +44,7 @@ const ritualSchema = new mongoose.Schema({
     createdBy: {
         type: String,
         required: true
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now
     }
-});
-
-ritualSchema.pre('save', function (next) {
-    this.updatedAt = Date.now();
-    next();
-});
+}, { timestamps: true });
 
 export default mongoose.model('Ritual', ritualSchema);

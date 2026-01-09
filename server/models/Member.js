@@ -27,11 +27,7 @@ const memberSchema = new mongoose.Schema({
     lastLogin: {
         type: Date,
         default: Date.now
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
     }
-});
+}, { timestamps: true });
 
 export default mongoose.model('Member', memberSchema);
