@@ -3,14 +3,13 @@ import Sidebar from './Sidebar';
 
 const Layout = ({ children }) => {
     return (
-        <div className="flex min-h-screen">
+        <div className="app-layout">
             <Sidebar />
-            <main className="flex-1 p-8 overflow-y-auto">
+            <main className="main-content">
                 {children}
             </main>
         </div>
     );
 };
-
 
 export default Layout;

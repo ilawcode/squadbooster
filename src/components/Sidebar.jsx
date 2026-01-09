@@ -18,8 +18,6 @@ const Sidebar = () => {
     const location = useLocation();
     const [isOpen, setIsOpen] = useState(false);
 
-    const toggleSidebar = () => setIsOpen(!isOpen);
-
     const handleNavigation = (path) => {
         navigate(path);
         setIsOpen(false);
@@ -34,26 +32,34 @@ const Sidebar = () => {
 
     return (
         <>
+            {/* Mobile Menu Button */}
             <button
-                className="md:hidden fixed top-4 right-4 z-50 p-2 bg-white/80 backdrop-blur-md rounded-lg shadow-sm border border-white/50 text-gray-600"
-                onClick={toggleSidebar}
+                className="mobile-menu-btn"
+                onClick={() => setIsOpen(!isOpen)}
             >
-                {isOpen ? <Close sx={{ fontSize: 24 }} /> : <Menu sx={{ fontSize: 24 }} />}
+                {isOpen ? <Close /> : <Menu />}
             </button>
 
-            <div className={`sidebar-glass ${isOpen ? 'translate-x-0' : ''}`}>
+            {/* Backdrop */}
+            <div
+                className={`sidebar-backdrop ${isOpen ? 'open' : ''}`}
+                onClick={() => setIsOpen(false)}
+            />
+
+            {/* Sidebar */}
+            <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
                 {/* Header */}
-                <div className="sidebar-header-modern">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600 shadow-sm" style={{ background: 'var(--primary-50)', color: 'var(--primary-600)' }}>
-                            <RocketLaunch sx={{ fontSize: 24 }} />
+                <div className="sidebar-header">
+                    <div className="sidebar-logo">
+                        <div className="sidebar-logo-icon">
+                            <RocketLaunch style={{ fontSize: 20 }} />
                         </div>
-                        <span className="font-extrabold text-xl tracking-tight text-gradient">SquadBooster</span>
+                        <span className="sidebar-logo-text">SquadBooster</span>
                     </div>
                 </div>
 
-                {/* Nav */}
-                <nav className="sidebar-nav-modern no-scrollbar">
+                {/* Navigation */}
+                <nav className="sidebar-nav no-scrollbar">
                     {navItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = location.pathname === item.path;
@@ -61,13 +67,9 @@ const Sidebar = () => {
                             <button
                                 key={item.path}
                                 onClick={() => handleNavigation(item.path)}
-                                className={`nav-item-modern ${isActive ? 'active' : ''}`}
+                                className={`sidebar-nav-item ${isActive ? 'active' : ''}`}
                             >
-                                <Icon
-                                    sx={{ fontSize: 20 }}
-                                    className={`transition-colors duration-200 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`}
-                                    style={{ color: isActive ? 'var(--primary-600)' : 'var(--text-tertiary)' }}
-                                />
+                                <Icon style={{ fontSize: 20 }} />
                                 {item.label}
                             </button>
                         );
@@ -75,34 +77,25 @@ const Sidebar = () => {
                 </nav>
 
                 {/* Footer */}
-                <div className="sidebar-footer-modern">
-                    <div className="user-profile-modern">
-                        <div className="w-10 h-10 rounded-full text-white flex items-center justify-center text-sm font-bold shadow-md" style={{ background: 'var(--gradient-primary)' }}>
+                <div className="sidebar-footer">
+                    <div className="sidebar-user">
+                        <div className="sidebar-avatar">
                             {user?.name?.charAt(0).toUpperCase()}
                         </div>
-                        <div className="flex-1 min-w-0" style={{ overflow: 'hidden' }}>
-                            <p className="text-sm font-bold text-gray-800 truncate" style={{ color: 'var(--text-primary)' }}>{user?.name}</p>
-                            <p className="text-xs text-indigo-500 truncate font-medium" style={{ color: 'var(--primary-500)' }}>{user?.role || 'Üye'}</p>
+                        <div className="sidebar-user-info">
+                            <div className="sidebar-user-name">{user?.name}</div>
+                            <div className="sidebar-user-role">{user?.role || 'Team Member'}</div>
                         </div>
                     </div>
                     <button
                         onClick={() => { logout(); navigate('/login'); }}
-                        className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-gray-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
-                        style={{ color: 'var(--text-secondary)' }}
+                        className="sidebar-logout"
                     >
-                        <Logout sx={{ fontSize: 16 }} />
+                        <Logout style={{ fontSize: 16 }} />
                         Çıkış Yap
                     </button>
                 </div>
-            </div>
-
-            {/* Backdrop for Mobile */}
-            {isOpen && (
-                <div
-                    className="fixed inset-0 z-30 bg-black/20 backdrop-blur-sm md:hidden"
-                    onClick={() => setIsOpen(false)}
-                />
-            )}
+            </aside>
         </>
     );
 };

@@ -1,21 +1,15 @@
 import React from 'react';
-import { getInitials } from '../utils';
 
-const Avatar = ({ name, color, size = 'md', className = '' }) => {
-    const sizeClass = {
-        sm: 'avatar-sm',
-        md: '',
-        lg: 'avatar-lg',
-        xl: 'avatar-xl'
-    }[size];
+const Avatar = ({ name, color, size = 'md' }) => {
+    const initial = name ? name.charAt(0).toUpperCase() : '?';
+
+    const sizeClass = size === 'sm' ? 'avatar-sm' : size === 'lg' ? 'avatar-lg' : '';
+
+    const style = color ? { background: color } : {};
 
     return (
-        <div
-            className={`avatar ${sizeClass} ${className}`}
-            style={{ backgroundColor: color }}
-            title={name}
-        >
-            {getInitials(name)}
+        <div className={`avatar ${sizeClass}`} style={style}>
+            {initial}
         </div>
     );
 };
