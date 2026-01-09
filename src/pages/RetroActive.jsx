@@ -196,171 +196,215 @@ const RetroActive = () => {
     // Step Rendering Logic
     return (
         <Layout>
-            {/* Header */}
-            <div className="bg-white border-b border-border-light sticky top-0 z-20 px-6 py-4 -mx-8 -mt-8 mb-8 shadow-sm">
-                <div className="max-w-6xl mx-auto flex justify-between items-center">
+            <div className="max-w-6xl mx-auto space-y-8 pb-12">
+                {/* Header Card */}
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-border-light flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
-                        <div className="flex items-center gap-2 mb-1">
-                            <span className="badge badge-primary uppercase">{ritual.type}</span>
-                            <h1 className="text-xl font-bold">{ritual.name}</h1>
+                        <div className="flex items-center gap-3 mb-2">
+                            <span className="badge badge-primary uppercase px-3 py-1 text-xs font-bold tracking-wider">{ritual.type}</span>
+                            <h1 className="text-2xl font-bold text-text-primary">{ritual.name}</h1>
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-muted">
-                            <span className="flex items-center gap-1"><Calendar size={14} /> {new Date(ritual.date).toLocaleDateString()}</span>
-                            <span>•</span>
+                        <div className="flex items-center gap-4 text-sm text-muted font-medium">
+                            <span className="flex items-center gap-1.5"><Calendar size={16} /> {new Date(ritual.date).toLocaleDateString()}</span>
+                            <span className="w-1 h-1 bg-border-medium rounded-full"></span>
                             <span>{cards.length} Fikir</span>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3 w-full md:w-auto">
                         {/* Stepper Controls */}
                         {ritual.retroStep === 'input' && (
-                            <button onClick={() => handleStepChange('group')} className="btn btn-primary">
-                                Gruplamaya Geç <ArrowRight size={16} />
+                            <button onClick={() => handleStepChange('group')} className="btn btn-primary w-full md:w-auto shadow-lg shadow-primary-500/20">
+                                Gruplamaya Geç <ArrowRight size={18} />
                             </button>
                         )}
                         {ritual.retroStep === 'group' && (
-                            <button onClick={() => handleStepChange('vote')} className="btn btn-primary">
-                                Oylamaya Geç <ArrowRight size={16} />
+                            <button onClick={() => handleStepChange('vote')} className="btn btn-primary w-full md:w-auto shadow-lg shadow-primary-500/20">
+                                Oylamaya Geç <ArrowRight size={18} />
                             </button>
                         )}
                         {ritual.retroStep === 'vote' && (
-                            <button onClick={() => handleStepChange('completed')} className="btn btn-success">
-                                Sonuçları Gör <Check size={16} />
+                            <button onClick={() => handleStepChange('completed')} className="btn btn-success w-full md:w-auto shadow-lg shadow-success-500/20">
+                                Sonuçları Gör <Check size={18} />
                             </button>
                         )}
                     </div>
                 </div>
-            </div>
 
-            {/* Content Area */}
-            <div className="max-w-6xl mx-auto">
+                {/* Content Area */}
 
                 {/* STEP 1: INPUT */}
                 {ritual.retroStep === 'input' && (
-                    <div className="space-y-6">
-                        <div className="card p-6 border-2 border-primary-100">
-                            <h3 className="text-lg font-bold mb-4">Fikir Ekle</h3>
-                            <form onSubmit={handleAddCard}>
-                                <div className="flex bg-bg-tertiary p-1 rounded-lg mb-4 w-fit">
-                                    <button
-                                        type="button"
-                                        className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${inputType === 'good' ? 'bg-white text-success-600 shadow-sm' : 'text-muted'}`}
-                                        onClick={() => setInputType('good')}
-                                    >
-                                        🎉 İyi Gidenler
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${inputType === 'bad' ? 'bg-white text-danger-600 shadow-sm' : 'text-muted'}`}
-                                        onClick={() => setInputType('bad')}
-                                    >
-                                        🌵 Geliştirilmeli
-                                    </button>
-                                </div>
-                                <div className="flex gap-2">
-                                    <input
-                                        type="text"
-                                        className="form-input flex-1"
-                                        placeholder="Düşüncelerini paylaş..."
-                                        value={newCardContent}
-                                        onChange={(e) => setNewCardContent(e.target.value)}
-                                        autoFocus
-                                    />
-                                    <button type="submit" className="btn btn-primary">Ekle</button>
-                                </div>
-                                <p className="text-xs text-muted mt-2 flex items-center gap-1">
-                                    <MessageSquare size={12} />
-                                    Girişleriniz anonim olarak görüntülenecektir.
-                                </p>
-                            </form>
-                        </div>
+                    <div className="card p-8 border-2 border-primary-100 shadow-lg relative overflow-hidden bg-white">
+                        <div className="absolute top-0 left-0 w-1.5 h-full bg-primary-500"></div>
+                        <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+                            <MessageSquare className="text-primary-500" />
+                            Fikirlerini Paylaş
+                        </h3>
+
+                        <form onSubmit={handleAddCard} className="max-w-3xl">
+                            <div className="flex bg-bg-tertiary p-1.5 rounded-xl mb-6 w-fit gap-1">
+                                <button
+                                    type="button"
+                                    className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${inputType === 'good' ? 'bg-white text-success-600 shadow-sm scale-105' : 'text-muted hover:text-text-primary'}`}
+                                    onClick={() => setInputType('good')}
+                                >
+                                    🎉 İyi Gidenler
+                                </button>
+                                <button
+                                    type="button"
+                                    className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${inputType === 'bad' ? 'bg-white text-danger-600 shadow-sm scale-105' : 'text-muted hover:text-text-primary'}`}
+                                    onClick={() => setInputType('bad')}
+                                >
+                                    🌵 Geliştirilmeli
+                                </button>
+                            </div>
+
+                            <div className="flex gap-3">
+                                <input
+                                    type="text"
+                                    className="form-input flex-1 h-12 text-lg shadow-sm"
+                                    placeholder="Düşüncelerini buraya yaz..."
+                                    value={newCardContent}
+                                    onChange={(e) => setNewCardContent(e.target.value)}
+                                    autoFocus
+                                />
+                                <button type="submit" className="btn btn-primary h-12 px-6 shadow-md shadow-primary-500/20 hover:scale-105 transition-transform">
+                                    <Plus size={20} /> Ekle
+                                </button>
+                            </div>
+                            <p className="text-sm text-muted mt-3 flex items-center gap-2 opacity-75 ml-1">
+                                <span className="w-1.5 h-1.5 bg-success-500 rounded-full"></span>
+                                Girişleriniz tamamen anonimdir, rahatça yazabilirsiniz.
+                            </p>
+                        </form>
                     </div>
                 )}
 
                 {/* BOARD VIEW (Input / Group / Vote) */}
                 {ritual.retroStep !== 'completed' && (
-                    <div className="grid md:grid-cols-2 gap-6 mt-6">
+                    <div className="grid md:grid-cols-2 gap-8">
                         {/* Good Column */}
-                        <div className="bg-success-50/50 p-4 rounded-2xl border border-success-100/50 min-h-[500px]">
-                            <h3 className="font-bold text-success-700 mb-4 flex items-center gap-2">
-                                🎉 İyi Gidenler
-                                <span className="bg-white px-2 py-0.5 rounded-full text-xs shadow-sm">{goodCards.length}</span>
-                            </h3>
+                        <div className="bg-success-50/40 p-6 rounded-3xl border border-success-100 min-h-[500px] shadow-sm">
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="text-lg font-bold text-success-700 flex items-center gap-2">
+                                    <span className="w-8 h-8 bg-success-100 rounded-lg flex items-center justify-center shadow-sm text-lg">🎉</span>
+                                    İyi Gidenler
+                                </h3>
+                                <span className="bg-white px-3 py-1 rounded-full text-sm font-bold text-success-700 shadow-sm border border-success-100">{goodCards.length}</span>
+                            </div>
 
-                            {ritual.retroStep === 'group' ? (
-                                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                                    <SortableContext items={goodCards.map(c => c._id)} strategy={verticalListSortingStrategy}>
-                                        {goodCards.map(card => (
-                                            <SortableItem key={card._id} id={card._id} card={card} step={ritual.retroStep} />
-                                        ))}
-                                    </SortableContext>
-                                </DndContext>
-                            ) : (
-                                goodCards.map(card => (
-                                    <SortableItem
-                                        key={card._id}
-                                        id={card._id}
-                                        card={{ ...card, isVoted: card.votes.includes(user.name) }}
-                                        step={ritual.retroStep}
-                                        onVote={handleVote}
-                                    />
-                                ))
-                            )}
+                            <div className="space-y-3">
+                                {ritual.retroStep === 'group' ? (
+                                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                                        <SortableContext items={goodCards.map(c => c._id)} strategy={verticalListSortingStrategy}>
+                                            {goodCards.map(card => (
+                                                <SortableItem key={card._id} id={card._id} card={card} step={ritual.retroStep} />
+                                            ))}
+                                        </SortableContext>
+                                    </DndContext>
+                                ) : (
+                                    goodCards.map(card => (
+                                        <SortableItem
+                                            key={card._id}
+                                            id={card._id}
+                                            card={{ ...card, isVoted: card.votes.includes(user.name) }}
+                                            step={ritual.retroStep}
+                                            onVote={handleVote}
+                                        />
+                                    ))
+                                )}
+                                {goodCards.length === 0 && (
+                                    <div className="text-center py-12 text-muted opacity-60 border-2 border-dashed border-success-200 rounded-xl bg-white/50">
+                                        Henüz bu kategoriye giriş yapılmadı
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         {/* Bad Column */}
-                        <div className="bg-danger-50/50 p-4 rounded-2xl border border-danger-100/50 min-h-[500px]">
-                            <h3 className="font-bold text-danger-700 mb-4 flex items-center gap-2">
-                                🌵 Geliştirilmeli
-                                <span className="bg-white px-2 py-0.5 rounded-full text-xs shadow-sm">{badCards.length}</span>
-                            </h3>
+                        <div className="bg-danger-50/40 p-6 rounded-3xl border border-danger-100 min-h-[500px] shadow-sm">
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="text-lg font-bold text-danger-700 flex items-center gap-2">
+                                    <span className="w-8 h-8 bg-danger-100 rounded-lg flex items-center justify-center shadow-sm text-lg">🌵</span>
+                                    Geliştirilmeli
+                                </h3>
+                                <span className="bg-white px-3 py-1 rounded-full text-sm font-bold text-danger-700 shadow-sm border border-danger-100">{badCards.length}</span>
+                            </div>
 
-                            {ritual.retroStep === 'group' ? (
-                                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                                    <SortableContext items={badCards.map(c => c._id)} strategy={verticalListSortingStrategy}>
-                                        {badCards.map(card => (
-                                            <SortableItem key={card._id} id={card._id} card={card} step={ritual.retroStep} />
-                                        ))}
-                                    </SortableContext>
-                                </DndContext>
-                            ) : (
-                                badCards.map(card => (
-                                    <SortableItem
-                                        key={card._id}
-                                        id={card._id}
-                                        card={{ ...card, isVoted: card.votes.includes(user.name) }}
-                                        step={ritual.retroStep}
-                                        onVote={handleVote}
-                                    />
-                                ))
-                            )}
+                            <div className="space-y-3">
+                                {ritual.retroStep === 'group' ? (
+                                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                                        <SortableContext items={badCards.map(c => c._id)} strategy={verticalListSortingStrategy}>
+                                            {badCards.map(card => (
+                                                <SortableItem key={card._id} id={card._id} card={card} step={ritual.retroStep} />
+                                            ))}
+                                        </SortableContext>
+                                    </DndContext>
+                                ) : (
+                                    badCards.map(card => (
+                                        <SortableItem
+                                            key={card._id}
+                                            id={card._id}
+                                            card={{ ...card, isVoted: card.votes.includes(user.name) }}
+                                            step={ritual.retroStep}
+                                            onVote={handleVote}
+                                        />
+                                    ))
+                                )}
+                                {badCards.length === 0 && (
+                                    <div className="text-center py-12 text-muted opacity-60 border-2 border-dashed border-danger-200 rounded-xl bg-white/50">
+                                        Henüz bu kategoriye giriş yapılmadı
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 )}
 
                 {/* COMPLETED / RESULTS VIEW */}
                 {ritual.retroStep === 'completed' && (
-                    <div className="space-y-6">
-                        <h2 className="text-xl font-bold">Sonuçlar ve Aksiyonlar</h2>
-                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="space-y-6 animate-fadeIn">
+                        <div className="flex items-center gap-3 mb-6 p-4 bg-primary-50 rounded-xl border border-primary-100">
+                            <div className="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-primary-600">
+                                <Layers size={24} />
+                            </div>
+                            <div>
+                                <h2 className="text-xl font-bold text-primary-900">Sonuçlar ve Aksiyonlar</h2>
+                                <p className="text-sm text-primary-700">En çok oy alan fikirleri aksiyona dönüştürün.</p>
+                            </div>
+                        </div>
+
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {sortedByVotes.map((card, index) => (
-                                <div key={card._id} className="card p-5 relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 p-2 bg-primary-50 rounded-bl-xl text-primary-700 font-bold text-sm">
+                                <div key={card._id} className="bg-white rounded-xl p-6 relative overflow-hidden group hover:shadow-lg transition-all border border-border-light hover:border-primary-200 flex flex-col h-full">
+                                    <div className="absolute top-0 right-0 px-3 py-1.5 bg-bg-tertiary rounded-bl-xl font-bold text-sm text-text-secondary border-b border-l border-border-light z-10">
                                         {card.votes.length} Oy
                                     </div>
-                                    <div className={`w-1 h-full absolute left-0 top-0 ${card.category === 'good' ? 'bg-success-500' : 'bg-danger-500'}`} />
+                                    <div className={`w-1.5 h-full absolute left-0 top-0 ${card.category === 'good' ? 'bg-success-500' : 'bg-danger-500'}`} />
 
-                                    <p className="font-medium mb-4 pr-8">{card.content}</p>
+                                    <div className="mb-6 pr-8 flex-1">
+                                        <p className="font-medium text-lg leading-relaxed text-text-primary">{card.content}</p>
+                                        {card.groupedCards && card.groupedCards.length > 0 && (
+                                            <div className="mt-4 pl-4 border-l-2 border-primary-100 space-y-2 bg-primary-50/50 p-3 rounded-r-lg">
+                                                {card.groupedCards.map((g, i) => (
+                                                    <p key={i} className="text-sm text-muted italic flex items-start gap-2">
+                                                        <span className="text-primary-400 mt-1">•</span>
+                                                        {g.content}
+                                                    </p>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
 
-                                    {/* Create Action Button (Only for bad items usually, but allowed for all) */}
                                     <button
                                         onClick={() => {
                                             setActionForm({ ...actionForm, title: card.content });
                                             setActionModal(card._id);
                                         }}
-                                        className="btn btn-sm btn-secondary w-full"
+                                        className="btn btn-secondary w-full group-hover:bg-primary-50 group-hover:text-primary-700 group-hover:border-primary-200 transition-colors mt-auto"
                                     >
-                                        <Layers size={14} /> Aksiyon Oluştur
+                                        <Layers size={16} /> Aksiyon Oluştur
                                     </button>
                                 </div>
                             ))}
@@ -371,25 +415,25 @@ const RetroActive = () => {
 
             {/* Action Modal */}
             {actionModal && (
-                <div className="modal-overlay" onClick={() => setActionModal(null)}>
-                    <div className="modal" onClick={e => e.stopPropagation()}>
-                        <div className="modal-header">
-                            <h3 className="modal-title">Aksiyon Oluştur</h3>
+                <div className="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={() => setActionModal(null)}>
+                    <div className="modal bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-scaleIn" onClick={e => e.stopPropagation()}>
+                        <div className="modal-header p-6 border-b border-border-light bg-bg-tertiary/50">
+                            <h3 className="modal-title text-xl font-bold">Aksiyon Oluştur</h3>
                         </div>
                         <form onSubmit={handleCreateAction}>
-                            <div className="modal-body space-y-4">
+                            <div className="modal-body p-6 space-y-4">
                                 <div className="form-group">
-                                    <label className="form-label">Aksiyon Başlığı</label>
+                                    <label className="form-label block text-sm font-medium text-text-secondary mb-1">Aksiyon Başlığı</label>
                                     <input
-                                        className="form-input"
+                                        className="form-input w-full h-10 px-3 rounded-lg border border-border-medium focus:ring-2 focus:ring-primary-100 focus:border-primary-500 transition-all"
                                         value={actionForm.title}
                                         onChange={e => setActionForm({ ...actionForm, title: e.target.value })}
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label className="form-label">Atanan Kişi</label>
+                                    <label className="form-label block text-sm font-medium text-text-secondary mb-1">Atanan Kişi</label>
                                     <select
-                                        className="form-select"
+                                        className="form-select w-full h-10 px-3 rounded-lg border border-border-medium focus:ring-2 focus:ring-primary-100 focus:border-primary-500 transition-all"
                                         value={actionForm.assignee}
                                         onChange={e => setActionForm({ ...actionForm, assignee: e.target.value })}
                                     >
@@ -400,9 +444,9 @@ const RetroActive = () => {
                                     </select>
                                 </div>
                             </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-ghost" onClick={() => setActionModal(null)}>İptal</button>
-                                <button type="submit" className="btn btn-primary">Oluştur</button>
+                            <div className="modal-footer p-6 border-t border-border-light flex justify-end gap-3 bg-bg-tertiary/30">
+                                <button type="button" className="btn btn-ghost text-muted hover:text-text-primary px-4 py-2 rounded-lg" onClick={() => setActionModal(null)}>İptal</button>
+                                <button type="submit" className="btn btn-primary px-6 py-2 shadow-md hover:shadow-lg transition-all">Oluştur</button>
                             </div>
                         </form>
                     </div>
