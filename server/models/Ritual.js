@@ -31,6 +31,11 @@ const ritualSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    retroStep: {
+        type: String,
+        enum: ['input', 'group', 'vote', 'completed'],
+        default: 'input'
+    },
     status: {
         type: String,
         enum: ['scheduled', 'in-progress', 'completed'],

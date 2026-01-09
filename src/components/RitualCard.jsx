@@ -3,7 +3,11 @@ import { Calendar, Clock, MapPin, Users } from 'lucide-react';
 import { formatDate } from '../utils';
 import Avatar from './Avatar';
 
+import { useNavigate } from 'react-router-dom';
+
 const RitualCard = ({ ritual, onDelete }) => {
+    const navigate = useNavigate();
+
     const getTypeInfo = (type) => {
         switch (type) {
             case 'planning': return { label: 'Planning', icon: 'planning', color: 'primary' };
@@ -58,15 +62,23 @@ const RitualCard = ({ ritual, onDelete }) => {
                     <p className="text-muted mb-4">{ritual.description}</p>
                 )}
 
-                <div className="ritual-meta flex-wrap">
-                    <div className="flex items-center gap-1">
+                <div className="ritual-meta flex-wrap items-center">
+                    <div className="flex items-center gap-1 mr-4">
                         <Calendar size={16} />
                         <span>{formatDate(ritual.date)}</span>
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 mr-auto">
                         <Clock size={16} />
                         <span>{ritual.duration} dk</span>
                     </div>
+
+                    <button
+                        onClick={() => navigate(`/retro/${ritual._id}`)}
+                        className="btn btn-sm btn-primary py-1 px-3 mr-4 shadow-sm"
+                    >
+                        Panele Git
+                    </button>
+
                     {ritual.participants && ritual.participants.length > 0 && (
                         <div className="flex items-center gap-2 ml-auto">
                             <div className="avatar-group">

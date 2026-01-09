@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import Actions from './pages/Actions';
 import Rituals from './pages/Rituals';
 import Team from './pages/Team';
+import RetroActive from './pages/RetroActive';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -41,6 +42,11 @@ const AppRoutes = () => {
       <Route path="/team" element={
         <ProtectedRoute>
           <Team />
+        </ProtectedRoute>
+      } />
+      <Route path="/retro/:id" element={
+        <ProtectedRoute>
+          <RetroActive />
         </ProtectedRoute>
       } />
     </Routes>

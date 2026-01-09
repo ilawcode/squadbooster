@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import actionRoutes from './routes/actions.js';
 import memberRoutes from './routes/members.js';
 import ritualRoutes from './routes/rituals.js';
+import retroRoutes from './routes/retro.js';
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use('/api/actions', actionRoutes);
 app.use('/api/members', memberRoutes);
 app.use('/api/rituals', ritualRoutes);
+app.use('/api/retro', retroRoutes);
 
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI)
