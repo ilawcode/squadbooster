@@ -4,7 +4,7 @@ import { api } from '../utils';
 import { useAuth } from '../context/AuthContext';
 import Layout from '../components/Layout';
 import Avatar from '../components/Avatar';
-import { Plus, ThumbsUp, MessageSquare, ArrowRight, Check, Layers, Trash2, Calendar, GripVertical } from 'lucide-react';
+import { Plus, ThumbsUp, MessageSquare, ArrowRight, Check, Layers, Trash2, Calendar, GripVertical, X, Clock, AlertCircle } from 'lucide-react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragOverlay } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -95,19 +95,21 @@ const RetroActive = () => {
     const [loading, setLoading] = useState(true);
     const [newCardContent, setNewCardContent] = useState('');
     const [inputType, setInputType] = useState('good');
-    const [activeId, setActiveId] = useState(null); // For DragOverlay
+    const [activeId, setActiveId] = useState(null);
 
     // Action creation state
     const [actionModal, setActionModal] = useState(null);
-    const [actionForm, setActionForm] = useState({ title: '', assignee: '' });
+    const [actionForm, setActionForm] = useState({
+        title: '',
+        description: '',
+        assignee: '',
+        dueDate: '',
+        priority: 'medium'
+    });
     const [members, setMembers] = useState([]);
 
     const sensors = useSensors(
-        useSensor(PointerSensor, {
-            activationConstraint: {
-                distance: 8, // 8px sürüklemeden drag başlamasın
-            },
-        }),
+        useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
         useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
     );
 
@@ -126,18 +128,12 @@ const RetroActive = () => {
             ]);
             setRitual(ritualData);
             setCards(cardsData);
-        } catch (error) {
-            console.error('Fetch error:', error);
-        } finally {
-            setLoading(false);
-        }
+        } catch (error) { console.error('Fetch error:', error); }
+        finally { setLoading(false); }
     };
 
     const fetchMembers = async () => {
-        try {
-            const data = await api.get('/members');
-            setMembers(data);
-        } catch (error) { console.error(error); }
+        try { const data = await api.get('/members'); setMembers(data); } catch (error) { console.error(error); }
     };
 
     const handleAddCard = async (e) => {
@@ -158,9 +154,7 @@ const RetroActive = () => {
         try {
             await api.delete(`/retro/cards/${cardId}`);
             setCards(cards.filter(c => c._id !== cardId));
-        } catch (error) {
-            console.error('Delete error:', error);
-        }
+        } catch (error) { console.error('Delete error:', error); }
     };
 
     const handleStepChange = async (step) => {
@@ -177,32 +171,21 @@ const RetroActive = () => {
         } catch (error) { console.error(error); }
     };
 
-    const handleDragStart = (event) => {
-        setActiveId(event.active.id);
-    };
+    const handleDragStart = (event) => { setActiveId(event.active.id); };
 
     const handleDragEnd = async (event) => {
         const { active, over } = event;
         setActiveId(null);
-
         if (!over || active.id === over.id) return;
-
-        // Grouping Logic
         const sourceCard = cards.find(c => c._id === active.id);
         const targetCard = cards.find(c => c._id === over.id);
-
         if (sourceCard && targetCard && sourceCard.category === targetCard.category) {
             const confirmMerge = window.confirm(`"${sourceCard.content}" kartını "${targetCard.content}" ile gruplamak istiyor musunuz?`);
             if (confirmMerge) {
                 try {
-                    await api.post('/retro/cards/group', {
-                        targetCardId: over.id,
-                        sourceCardId: active.id
-                    });
+                    await api.post('/retro/cards/group', { targetCardId: over.id, sourceCardId: active.id });
                     fetchData();
-                } catch (error) {
-                    console.error('Merge error:', error);
-                }
+                } catch (error) { console.error('Merge error:', error); }
             }
         }
     };
@@ -212,13 +195,16 @@ const RetroActive = () => {
         try {
             await api.post('/actions', {
                 title: actionForm.title,
+                description: actionForm.description,
                 assignee: actionForm.assignee,
+                dueDate: actionForm.dueDate,
+                priority: actionForm.priority,
                 ritual: id,
                 createdBy: user.name,
                 status: 'todo'
             });
             setActionModal(null);
-            setActionForm({ title: '', assignee: '' });
+            setActionForm({ title: '', description: '', assignee: '', dueDate: '', priority: 'medium' });
             alert('Aksiyon oluşturuldu!');
         } catch (error) { console.error(error); }
     };
@@ -229,7 +215,6 @@ const RetroActive = () => {
     const goodCards = cards.filter(c => c.category === 'good');
     const badCards = cards.filter(c => c.category === 'bad');
     const sortedByVotes = [...cards].sort((a, b) => b.votes.length - a.votes.length);
-
     const activeCard = activeId ? cards.find(c => c._id === activeId) : null;
 
     return (
@@ -330,23 +315,14 @@ const RetroActive = () => {
                                     <SortableContext items={goodCards.map(c => c._id)} strategy={verticalListSortingStrategy}>
                                         <div className="space-y-3 min-h-[400px]">
                                             {goodCards.map(card => (
-                                                <SortableItem
-                                                    key={card._id} id={card._id} card={card} step={ritual.retroStep}
-                                                    currentUser={user.name} onDelete={handleDeleteCard}
-                                                />
+                                                <SortableItem key={card._id} id={card._id} card={card} step={ritual.retroStep} currentUser={user.name} onDelete={handleDeleteCard} />
                                             ))}
                                         </div>
                                     </SortableContext>
                                 ) : (
                                     <div className="space-y-3">
                                         {goodCards.map(card => (
-                                            <SortableItem
-                                                key={card._id} id={card._id}
-                                                card={{ ...card, isVoted: card.votes.includes(user.name) }}
-                                                step={ritual.retroStep}
-                                                onVote={handleVote}
-                                                currentUser={user.name} onDelete={handleDeleteCard}
-                                            />
+                                            <SortableItem key={card._id} id={card._id} card={{ ...card, isVoted: card.votes.includes(user.name) }} step={ritual.retroStep} onVote={handleVote} currentUser={user.name} onDelete={handleDeleteCard} />
                                         ))}
                                     </div>
                                 )}
@@ -363,23 +339,14 @@ const RetroActive = () => {
                                     <SortableContext items={badCards.map(c => c._id)} strategy={verticalListSortingStrategy}>
                                         <div className="space-y-3 min-h-[400px]">
                                             {badCards.map(card => (
-                                                <SortableItem
-                                                    key={card._id} id={card._id} card={card} step={ritual.retroStep}
-                                                    currentUser={user.name} onDelete={handleDeleteCard}
-                                                />
+                                                <SortableItem key={card._id} id={card._id} card={card} step={ritual.retroStep} currentUser={user.name} onDelete={handleDeleteCard} />
                                             ))}
                                         </div>
                                     </SortableContext>
                                 ) : (
                                     <div className="space-y-3">
                                         {badCards.map(card => (
-                                            <SortableItem
-                                                key={card._id} id={card._id}
-                                                card={{ ...card, isVoted: card.votes.includes(user.name) }}
-                                                step={ritual.retroStep}
-                                                onVote={handleVote}
-                                                currentUser={user.name} onDelete={handleDeleteCard}
-                                            />
+                                            <SortableItem key={card._id} id={card._id} card={{ ...card, isVoted: card.votes.includes(user.name) }} step={ritual.retroStep} onVote={handleVote} currentUser={user.name} onDelete={handleDeleteCard} />
                                         ))}
                                     </div>
                                 )}
@@ -417,13 +384,12 @@ const RetroActive = () => {
                                                 ))}
                                             </div>
                                         )}
-                                        <p className="text-xs text-muted mt-2">@{card.createdBy}</p>
                                     </div>
                                     <button
                                         onClick={() => { setActionForm({ ...actionForm, title: card.content }); setActionModal(card._id); }}
-                                        className="btn btn-secondary w-full"
+                                        className="btn btn-secondary w-full hover:bg-primary-50 hover:text-primary-600 transition-colors"
                                     >
-                                        Aksiyon Oluştur
+                                        <Layers size={14} className="mr-2" /> Aksiyon Oluştur
                                     </button>
                                 </div>
                             ))}
@@ -432,28 +398,83 @@ const RetroActive = () => {
                 )}
             </div>
 
-            {/* Action Modal */}
+            {/* NEW ENHANCED ACTION MODAL */}
             {actionModal && (
                 <div className="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setActionModal(null)}>
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-scaleIn" onClick={e => e.stopPropagation()}>
-                        <div className="p-6 border-b border-gray-100 bg-gray-50">
-                            <h3 className="text-xl font-bold">Aksiyon Oluştur</h3>
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-scaleIn flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
+                        <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50">
+                            <h3 className="text-xl font-bold flex items-center gap-2">
+                                <Layers className="text-primary-500" /> Aksiyon Oluştur
+                            </h3>
+                            <button onClick={() => setActionModal(null)} className="p-1 hover:bg-gray-200 rounded-lg transition-colors"><X size={20} /></button>
                         </div>
-                        <form onSubmit={handleCreateAction} className="p-6 space-y-4">
+
+                        <form onSubmit={handleCreateAction} className="overflow-y-auto p-6 space-y-5">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Aksiyon Başlığı</label>
-                                <input className="form-input w-full border-gray-300 rounded-lg px-3 py-2" value={actionForm.title} onChange={e => setActionForm({ ...actionForm, title: e.target.value })} />
+                                <label className="block text-sm font-bold text-gray-700 mb-1.5">Aksiyon Başlığı</label>
+                                <input
+                                    className="form-input w-full border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-100 focus:border-primary-500"
+                                    value={actionForm.title}
+                                    onChange={e => setActionForm({ ...actionForm, title: e.target.value })}
+                                    placeholder="Yapılacak iş nedir?"
+                                    required
+                                />
                             </div>
+
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Atanan Kişi</label>
-                                <select className="form-select w-full border-gray-300 rounded-lg px-3 py-2" value={actionForm.assignee} onChange={e => setActionForm({ ...actionForm, assignee: e.target.value })}>
-                                    <option value="">Seçiniz</option>
-                                    {members.map(m => <option key={m._id} value={m._id}>{m.name}</option>)}
-                                </select>
+                                <label className="block text-sm font-bold text-gray-700 mb-1.5">Açıklama</label>
+                                <textarea
+                                    className="form-input w-full border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-100 focus:border-primary-500 min-h-[100px]"
+                                    value={actionForm.description}
+                                    onChange={e => setActionForm({ ...actionForm, description: e.target.value })}
+                                    placeholder="Varsa detayları ekleyin..."
+                                />
                             </div>
-                            <div className="flex justify-end gap-3 mt-6">
-                                <button type="button" className="btn btn-ghost px-4 py-2" onClick={() => setActionModal(null)}>İptal</button>
-                                <button type="submit" className="btn btn-primary px-4 py-2">Oluştur</button>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Bitiş Tarihi</label>
+                                    <div className="relative">
+                                        <input
+                                            type="date"
+                                            className="form-input w-full border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-100 focus:border-primary-500"
+                                            value={actionForm.dueDate}
+                                            onChange={e => setActionForm({ ...actionForm, dueDate: e.target.value })}
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Öncelik</label>
+                                    <select
+                                        className="form-select w-full border-gray-300 rounded-lg px-4 py-2.5"
+                                        value={actionForm.priority}
+                                        onChange={e => setActionForm({ ...actionForm, priority: e.target.value })}
+                                    >
+                                        <option value="low">Düşük</option>
+                                        <option value="medium">Orta</option>
+                                        <option value="high">Yüksek</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-bold text-gray-700 mb-1.5">Atanan Kişi</label>
+                                <div className="relative">
+                                    <select
+                                        className="form-select w-full border-gray-300 rounded-lg px-4 py-2.5 appearance-none"
+                                        value={actionForm.assignee}
+                                        onChange={e => setActionForm({ ...actionForm, assignee: e.target.value })}
+                                    >
+                                        <option value="">Seçiniz</option>
+                                        {members.map(m => <option key={m._id} value={m._id}>{m.name}</option>)}
+                                    </select>
+                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">▼</div>
+                                </div>
+                            </div>
+
+                            <div className="pt-4 flex justify-end gap-3 border-t border-gray-100 mt-2">
+                                <button type="button" className="btn btn-ghost px-5 py-2.5 rounded-lg font-medium" onClick={() => setActionModal(null)}>İptal</button>
+                                <button type="submit" className="btn btn-primary px-6 py-2.5 rounded-lg shadow-lg shadow-primary-500/30 hover:shadow-primary-500/40 hover:-translate-y-0.5 transition-all">Aksiyon Oluştur</button>
                             </div>
                         </form>
                     </div>
