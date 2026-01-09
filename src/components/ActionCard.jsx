@@ -67,9 +67,7 @@ const ActionCard = ({ action, onStatusChange, onDelete }) => {
                             onClick={(e) => {
                                 e.stopPropagation();
                                 e.preventDefault();
-                                if (window.confirm('Silmek istediğine emin misin?')) {
-                                    onDelete(action._id);
-                                }
+                                onDelete(action._id);
                             }}
                             className="btn btn-ghost btn-icon"
                             style={{ color: 'var(--danger)', opacity: 0.6 }}
