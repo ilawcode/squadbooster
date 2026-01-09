@@ -21,15 +21,19 @@ app.use('/api/members', memberRoutes);
 app.use('/api/rituals', ritualRoutes);
 
 // MongoDB connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/squadbooster')
+mongoose.connect(process.env.MONGODB_URI)
     .then(() => {
         console.log('✅ MongoDB bağlantısı başarılı');
-        app.listen(PORT, () => {
-            console.log(`🚀 Server ${PORT} portunda çalışıyor`);
-        });
     })
     .catch((error) => {
         console.error('❌ MongoDB bağlantı hatası:', error);
     });
+
+// Only start the server if file is run directly (not imported as module)
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`🚀 Server ${PORT} portunda çalışıyor`);
+    });
+}
 
 export default app;

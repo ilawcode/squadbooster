@@ -44,12 +44,12 @@ export const getInitials = (name) => {
 
 export const api = {
     get: async (url) => {
-        const response = await fetch(`http://localhost:5001/api${url}`);
+        const response = await fetch(`/api${url}`);
         if (!response.ok) throw new Error('API Error');
         return response.json();
     },
     post: async (url, data) => {
-        const response = await fetch(`http://localhost:5001/api${url}`, {
+        const response = await fetch(`/api${url}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
@@ -58,7 +58,7 @@ export const api = {
         return response.json();
     },
     patch: async (url, data) => {
-        const response = await fetch(`http://localhost:5001/api${url}`, {
+        const response = await fetch(`/api${url}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
@@ -67,7 +67,7 @@ export const api = {
         return response.json();
     },
     delete: async (url) => {
-        const response = await fetch(`http://localhost:5001/api${url}`, {
+        const response = await fetch(`/api${url}`, {
             method: 'DELETE',
         });
         if (!response.ok) throw new Error('API Error');
