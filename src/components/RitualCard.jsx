@@ -72,12 +72,21 @@ const RitualCard = ({ ritual, onDelete }) => {
                         <span>{ritual.duration} dk</span>
                     </div>
 
-                    <button
-                        onClick={() => navigate(`/retro/${ritual._id}`)}
-                        className="btn btn-sm btn-primary py-1 px-3 mr-4 shadow-sm"
-                    >
-                        Panele Git
-                    </button>
+                    {ritual.type === 'retro' ? (
+                        <button
+                            onClick={() => navigate(`/retro/${ritual._id}`)}
+                            className="btn btn-sm btn-accent py-1.5 px-3 mr-4 shadow-md hover:shadow-lg transition-all flex items-center gap-1.5 font-medium"
+                        >
+                            <span>🚀</span> Retro Başlat
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => navigate(`/retro/${ritual._id}`)}
+                            className="btn btn-sm btn-secondary py-1 px-3 mr-4 shadow-sm flex items-center gap-1.5"
+                        >
+                            <span>📝</span> Notlar
+                        </button>
+                    )}
 
                     {ritual.participants && ritual.participants.length > 0 && (
                         <div className="flex items-center gap-2 ml-auto">
