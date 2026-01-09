@@ -172,10 +172,34 @@ const Actions = () => {
     };
 
     const filteredActions = filter === 'my' ? actions.filter(a => a.assignee?._id === user._id) : actions;
+
+    // Archive: tasks done more than 2 days ago
+    const twoDaysAgo = new Date();
+    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+
     const todoActions = filteredActions.filter(a => a.status === 'todo');
     const inProgressActions = filteredActions.filter(a => a.status === 'in-progress');
-    const doneActions = filteredActions.filter(a => a.status === 'done');
+    const doneActions = filteredActions.filter(a => {
+        if (a.status !== 'done') return false;
+        const updatedAt = new Date(a.updatedAt || a.createdAt);
+        return updatedAt > twoDaysAgo; // Recent done tasks (within 2 days)
+    });
+    const archivedActions = filteredActions.filter(a => {
+        if (a.status !== 'done') return false;
+        const updatedAt = new Date(a.updatedAt || a.createdAt);
+        return updatedAt <= twoDaysAgo; // Older than 2 days
+    });
+
+    // Group archived actions by ritual
+    const archivedByRitual = archivedActions.reduce((acc, action) => {
+        const ritualName = action.ritual?.name || 'Ritüelsiz';
+        if (!acc[ritualName]) acc[ritualName] = [];
+        acc[ritualName].push(action);
+        return acc;
+    }, {});
+
     const activeAction = activeId ? actions.find(a => a._id === activeId) : null;
+    const [showArchive, setShowArchive] = useState(false);
 
     const dropAnimation = {
         sideEffects: defaultDropAnimationSideEffects({
@@ -252,6 +276,60 @@ const Actions = () => {
                         ) : null}
                     </DragOverlay>
                 </DndContext>
+
+                {/* Archive Section */}
+                {archivedActions.length > 0 && (
+                    <div className="archive-section" style={{ marginTop: 'var(--space-8)' }}>
+                        <button
+                            onClick={() => setShowArchive(!showArchive)}
+                            className="archive-header"
+                        >
+                            <div className="flex items-center gap-2">
+                                <svg
+                                    style={{
+                                        width: 20,
+                                        height: 20,
+                                        transform: showArchive ? 'rotate(90deg)' : 'rotate(0deg)',
+                                        transition: 'transform 200ms ease'
+                                    }}
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                                <span>Arşiv</span>
+                                <span className="archive-count">{archivedActions.length}</span>
+                            </div>
+                            <span className="text-xs" style={{ color: 'var(--gray-400)' }}>
+                                2 günden eski tamamlanan görevler
+                            </span>
+                        </button>
+
+                        {showArchive && (
+                            <div className="archive-content">
+                                {Object.entries(archivedByRitual).map(([ritualName, ritualActions]) => (
+                                    <div key={ritualName} className="archive-group">
+                                        <div className="archive-group-header">
+                                            <span className="archive-group-title">{ritualName}</span>
+                                            <span className="archive-group-count">{ritualActions.length}</span>
+                                        </div>
+                                        <div className="archive-group-cards">
+                                            {ritualActions.map(action => (
+                                                <div key={action._id} className="archive-card">
+                                                    <div className="archive-card-title">{action.title}</div>
+                                                    <div className="archive-card-meta">
+                                                        {action.assignee?.name || 'Atanmamış'}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
 
             {/* Create Action Modal */}
