@@ -41,8 +41,8 @@ const DroppableColumn = ({ id, title, count, icon, color, items, children }) => 
     const { setNodeRef } = useSortable({ id, data: { type: 'Column', id } });
 
     return (
-        <div ref={setNodeRef} className="flex flex-col h-full bg-gray-50/50 rounded-2xl border border-gray-100/50 backdrop-blur-sm shadow-sm md:min-h-[calc(100vh-180px)]">
-            <div className={`p-4 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-gray-50/80 backdrop-blur z-10 rounded-t-2xl ${color}`}>
+        <div ref={setNodeRef} className="kanban-column flex flex-col h-full md:min-h-[calc(100vh-180px)]">
+            <div className={`kanban-column-header sticky top-0 z-10 ${color}`}>
                 <div className="flex items-center gap-2 font-bold text-gray-700">
                     {icon}
                     <span>{title}</span>
@@ -51,12 +51,12 @@ const DroppableColumn = ({ id, title, count, icon, color, items, children }) => 
                     {count}
                 </span>
             </div>
-            <div className="flex-1 p-3 overflow-y-auto min-h-[150px]">
+            <div className="flex-1 overflow-y-auto min-h-[150px] kanban-cards">
                 <SortableContext items={items.map(i => i._id)} strategy={verticalListSortingStrategy}>
                     {children}
                 </SortableContext>
                 {items.length === 0 && (
-                    <div className="h-24 flex items-center justify-center text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-xl m-2">
+                    <div className="h-24 flex items-center justify-center text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-xl">
                         Boş
                     </div>
                 )}
@@ -216,7 +216,7 @@ const Actions = () => {
 
                 {/* Kanban Board */}
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-                    <div className="grid md:grid-cols-3 gap-6 flex-1 min-h-[500px]">
+                    <div className="kanban-board flex-1 min-h-[500px]">
                         <DroppableColumn id="todo" title="Yapılacaklar" count={todoActions.length} items={todoActions} icon={<FormatListBulleted sx={{ fontSize: 20 }} />} color="text-gray-600">
                             {todoActions.map(action => (
                                 <SortableItem key={action._id} id={action._id}>
