@@ -471,6 +471,26 @@ body {
   }
 }
 
+/* Rituals Grid - 3 columns with more spacing */
+.rituals-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-8);
+}
+
+@media (max-width: 1200px) {
+  .rituals-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .rituals-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
 .kanban-column {
   background: var(--gray-50);
   border-radius: var(--radius-xl);

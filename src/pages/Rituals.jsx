@@ -92,7 +92,7 @@ const Rituals = () => {
                         <CalendarToday className="text-primary-500" sx={{ fontSize: 20 }} />
                         <h2 className="text-lg font-bold text-gray-800">Yaklaşan Ritüeller</h2>
                     </div>
-                    <div className="grid md:grid-cols-2 gap-6">
+                    <div className="rituals-grid">
                         {upcomingRituals.length > 0 ? (
                             upcomingRituals.map(ritual => (
                                 <RitualCard key={ritual._id} ritual={ritual} onDelete={handleDelete} />
@@ -108,7 +108,7 @@ const Rituals = () => {
                 {pastRituals.length > 0 && (
                     <section>
                         <h2 className="text-lg font-bold mb-4 opacity-60">Geçmiş Ritüeller</h2>
-                        <div className="grid md:grid-cols-2 gap-6 opacity-60 hover:opacity-100 transition-opacity duration-300">
+                        <div className="rituals-grid opacity-60 hover:opacity-100 transition-opacity duration-300">
                             {pastRituals.map(ritual => (
                                 <RitualCard key={ritual._id} ritual={ritual} onDelete={handleDelete} />
                             ))}
