@@ -97,4 +97,19 @@ router.post('/cards/group', async (req, res) => {
     }
 });
 
+// Delete a card
+router.delete('/cards/:cardId', async (req, res) => {
+    try {
+        const card = await RetroCard.findById(req.params.cardId);
+        if (!card) return res.status(404).json({ message: 'Kart bulunamadı' });
+
+        // Optional: Check if user owns the card or is admin (skipped for MVP)
+
+        await card.deleteOne();
+        res.json({ message: 'Kart silindi' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 export default router;

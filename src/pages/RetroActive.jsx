@@ -10,7 +10,7 @@ import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSo
 import { CSS } from '@dnd-kit/utilities';
 
 // Sortable Item Component (Card View)
-const SortableItem = ({ id, card, onVote, step, onMerge }) => {
+const SortableItem = ({ id, card, onVote, step, onDelete, currentUser }) => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
 
     const style = {
@@ -26,7 +26,7 @@ const SortableItem = ({ id, card, onVote, step, onMerge }) => {
             ref={setNodeRef}
             style={style}
             className={`
-        bg-white p-4 rounded-xl shadow-sm border border-border-light mb-3 select-none flex items-start gap-3 transition-all
+        bg-white p-4 rounded-xl shadow-sm border border-border-light mb-3 select-none flex items-start gap-3 transition-all group
         ${isDragging ? 'shadow-xl ring-2 ring-primary-400 scale-105 rotate-1' : 'hover:shadow-md'}
         ${step === 'group' ? 'cursor-grab active:cursor-grabbing' : ''}
       `}
@@ -37,18 +37,34 @@ const SortableItem = ({ id, card, onVote, step, onMerge }) => {
                 </div>
             )}
 
-            <div className="flex-1">
-                <p className="text-text-primary font-medium text-base whitespace-pre-wrap leading-relaxed">{card.content}</p>
+            <div className="flex-1 min-w-0">
+                <p className="text-text-primary font-medium text-base whitespace-pre-wrap leading-relaxed break-words">{card.content}</p>
                 {card.groupedCards && card.groupedCards.length > 0 && (
                     <div className="mt-3 pl-3 border-l-2 border-primary-200 space-y-1.5 bg-bg-tertiary/50 p-2 rounded-r-lg">
                         {card.groupedCards.map((g, i) => (
                             <div key={i} className="flex items-start gap-2 text-sm text-muted">
-                                <span className="mt-1.5 w-1 h-1 rounded-full bg-primary-400"></span>
-                                <span>{g.content}</span>
+                                <span className="mt-1.5 w-1 h-1 rounded-full bg-primary-400 flex-shrink-0"></span>
+                                <span className="break-words">{g.content}</span>
                             </div>
                         ))}
                     </div>
                 )}
+
+                <div className="mt-2 flex items-center justify-between">
+                    <span className="text-xs text-muted">@{card.createdBy}</span>
+                    {onDelete && (step === 'input' || step === 'group') && (
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                if (window.confirm('Bu kartı silmek istediğine emin misin?')) onDelete(card._id);
+                            }}
+                            className="p-1.5 text-muted hover:text-danger-500 hover:bg-danger-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                            title="Kartı Sil"
+                        >
+                            <Trash2 size={14} />
+                        </button>
+                    )}
+                </div>
             </div>
 
             {step === 'vote' && (
@@ -57,7 +73,7 @@ const SortableItem = ({ id, card, onVote, step, onMerge }) => {
                         e.stopPropagation(); // Prevent drag
                         onVote(card._id);
                     }}
-                    className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-bold transition-all transform active:scale-95 ${card.isVoted
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold transition-all transform active:scale-95 ml-2 ${card.isVoted
                             ? 'bg-primary-100 text-primary-700 shadow-inner ring-1 ring-primary-200'
                             : 'bg-bg-tertiary text-text-secondary hover:bg-border-light'
                         }`}
@@ -89,7 +105,7 @@ const RetroActive = () => {
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
-                distance: 8, // 8px sürüklemeden drag başlamasın (yanlış tıklamaları önler)
+                distance: 8, // 8px sürüklemeden drag başlamasın
             },
         }),
         useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -138,6 +154,15 @@ const RetroActive = () => {
         } catch (error) { console.error(error); }
     };
 
+    const handleDeleteCard = async (cardId) => {
+        try {
+            await api.delete(`/retro/cards/${cardId}`);
+            setCards(cards.filter(c => c._id !== cardId));
+        } catch (error) {
+            console.error('Delete error:', error);
+        }
+    };
+
     const handleStepChange = async (step) => {
         try {
             const updatedRitual = await api.patch(`/retro/${id}/step`, { step });
@@ -163,7 +188,6 @@ const RetroActive = () => {
         if (!over || active.id === over.id) return;
 
         // Grouping Logic
-        // Kartı başka bir kartın üzerine bıraktı mı?
         const sourceCard = cards.find(c => c._id === active.id);
         const targetCard = cards.find(c => c._id === over.id);
 
@@ -175,7 +199,6 @@ const RetroActive = () => {
                         targetCardId: over.id,
                         sourceCardId: active.id
                     });
-                    // Optimistic update or wait for poll
                     fetchData();
                 } catch (error) {
                     console.error('Merge error:', error);
@@ -307,14 +330,23 @@ const RetroActive = () => {
                                     <SortableContext items={goodCards.map(c => c._id)} strategy={verticalListSortingStrategy}>
                                         <div className="space-y-3 min-h-[400px]">
                                             {goodCards.map(card => (
-                                                <SortableItem key={card._id} id={card._id} card={card} step={ritual.retroStep} />
+                                                <SortableItem
+                                                    key={card._id} id={card._id} card={card} step={ritual.retroStep}
+                                                    currentUser={user.name} onDelete={handleDeleteCard}
+                                                />
                                             ))}
                                         </div>
                                     </SortableContext>
                                 ) : (
                                     <div className="space-y-3">
                                         {goodCards.map(card => (
-                                            <SortableItem key={card._id} id={card._id} card={{ ...card, isVoted: card.votes.includes(user.name) }} step={ritual.retroStep} onVote={handleVote} />
+                                            <SortableItem
+                                                key={card._id} id={card._id}
+                                                card={{ ...card, isVoted: card.votes.includes(user.name) }}
+                                                step={ritual.retroStep}
+                                                onVote={handleVote}
+                                                currentUser={user.name} onDelete={handleDeleteCard}
+                                            />
                                         ))}
                                     </div>
                                 )}
@@ -331,14 +363,23 @@ const RetroActive = () => {
                                     <SortableContext items={badCards.map(c => c._id)} strategy={verticalListSortingStrategy}>
                                         <div className="space-y-3 min-h-[400px]">
                                             {badCards.map(card => (
-                                                <SortableItem key={card._id} id={card._id} card={card} step={ritual.retroStep} />
+                                                <SortableItem
+                                                    key={card._id} id={card._id} card={card} step={ritual.retroStep}
+                                                    currentUser={user.name} onDelete={handleDeleteCard}
+                                                />
                                             ))}
                                         </div>
                                     </SortableContext>
                                 ) : (
                                     <div className="space-y-3">
                                         {badCards.map(card => (
-                                            <SortableItem key={card._id} id={card._id} card={{ ...card, isVoted: card.votes.includes(user.name) }} step={ritual.retroStep} onVote={handleVote} />
+                                            <SortableItem
+                                                key={card._id} id={card._id}
+                                                card={{ ...card, isVoted: card.votes.includes(user.name) }}
+                                                step={ritual.retroStep}
+                                                onVote={handleVote}
+                                                currentUser={user.name} onDelete={handleDeleteCard}
+                                            />
                                         ))}
                                     </div>
                                 )}
@@ -364,15 +405,20 @@ const RetroActive = () => {
                         </div>
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {sortedByVotes.map(card => (
-                                <div key={card._id} className="bg-white rounded-xl p-6 shadow-sm border border-border-light relative overflow-hidden">
+                                <div key={card._id} className="bg-white rounded-xl p-6 shadow-sm border border-border-light relative overflow-hidden group">
                                     <div className="absolute top-0 right-0 px-3 py-1 bg-gray-100 rounded-bl-lg font-bold text-sm">{card.votes.length} Oy</div>
                                     <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${card.category === 'good' ? 'bg-success-500' : 'bg-danger-500'}`}></div>
-                                    <p className="font-medium text-lg mb-4">{card.content}</p>
-                                    {card.groupedCards?.length > 0 && (
-                                        <div className="pl-4 border-l-2 border-gray-200 text-sm text-gray-500 space-y-1 mb-4">
-                                            {card.groupedCards.map((g, i) => <p key={i}>• {g.content}</p>)}
-                                        </div>
-                                    )}
+                                    <div className="mb-4">
+                                        <p className="font-medium text-lg text-text-primary leading-relaxed">{card.content}</p>
+                                        {card.groupedCards?.length > 0 && (
+                                            <div className="mt-2 pl-3 border-l-2 border-gray-200 space-y-1">
+                                                {card.groupedCards.map((g, i) => (
+                                                    <p key={i} className="text-sm text-gray-500">• {g.content}</p>
+                                                ))}
+                                            </div>
+                                        )}
+                                        <p className="text-xs text-muted mt-2">@{card.createdBy}</p>
+                                    </div>
                                     <button
                                         onClick={() => { setActionForm({ ...actionForm, title: card.content }); setActionModal(card._id); }}
                                         className="btn btn-secondary w-full"
@@ -396,18 +442,18 @@ const RetroActive = () => {
                         <form onSubmit={handleCreateAction} className="p-6 space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Aksiyon Başlığı</label>
-                                <input className="form-input w-full" value={actionForm.title} onChange={e => setActionForm({ ...actionForm, title: e.target.value })} />
+                                <input className="form-input w-full border-gray-300 rounded-lg px-3 py-2" value={actionForm.title} onChange={e => setActionForm({ ...actionForm, title: e.target.value })} />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Atanan Kişi</label>
-                                <select className="form-select w-full" value={actionForm.assignee} onChange={e => setActionForm({ ...actionForm, assignee: e.target.value })}>
+                                <select className="form-select w-full border-gray-300 rounded-lg px-3 py-2" value={actionForm.assignee} onChange={e => setActionForm({ ...actionForm, assignee: e.target.value })}>
                                     <option value="">Seçiniz</option>
                                     {members.map(m => <option key={m._id} value={m._id}>{m.name}</option>)}
                                 </select>
                             </div>
                             <div className="flex justify-end gap-3 mt-6">
-                                <button type="button" className="btn btn-ghost" onClick={() => setActionModal(null)}>İptal</button>
-                                <button type="submit" className="btn btn-primary">Oluştur</button>
+                                <button type="button" className="btn btn-ghost px-4 py-2" onClick={() => setActionModal(null)}>İptal</button>
+                                <button type="submit" className="btn btn-primary px-4 py-2">Oluştur</button>
                             </div>
                         </form>
                     </div>
