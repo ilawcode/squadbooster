@@ -66,12 +66,15 @@ const ActionCard = ({ action, onStatusChange, onDelete }) => {
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
+                                e.preventDefault();
                                 if (window.confirm('Silmek istediğine emin misin?')) {
                                     onDelete(action._id);
                                 }
                             }}
-                            className="btn btn-ghost btn-sm opacity-0 group-hover-visible transition-all"
-                            style={{ color: 'var(--danger)' }}
+                            className="btn btn-ghost btn-icon"
+                            style={{ color: 'var(--danger)', opacity: 0.6 }}
+                            onMouseEnter={(e) => e.currentTarget.style.opacity = 1}
+                            onMouseLeave={(e) => e.currentTarget.style.opacity = 0.6}
                         >
                             <Delete style={{ fontSize: 16 }} />
                         </button>
