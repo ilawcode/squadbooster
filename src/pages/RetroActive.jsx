@@ -401,12 +401,14 @@ const RetroActive = () => {
             {/* NEW ENHANCED ACTION MODAL */}
             {actionModal && (
                 <div className="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setActionModal(null)}>
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-scaleIn flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-scaleIn flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
                         <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50">
                             <h3 className="text-xl font-bold flex items-center gap-2">
                                 <Layers className="text-primary-500" /> Aksiyon Oluştur
                             </h3>
-                            <button onClick={() => setActionModal(null)} className="p-1 hover:bg-gray-200 rounded-lg transition-colors"><X size={20} /></button>
+                            <button onClick={() => setActionModal(null)} className="p-2 hover:bg-gray-200 rounded-full transition-colors text-gray-500 hover:text-gray-800">
+                                <X size={20} />
+                            </button>
                         </div>
 
                         <form onSubmit={handleCreateAction} className="overflow-y-auto p-6 space-y-5">
