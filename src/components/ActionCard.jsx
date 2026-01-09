@@ -44,7 +44,7 @@ const ActionCard = ({ action, onStatusChange, onDelete }) => {
     const StatusIcon = currentStatus.icon;
 
     return (
-        <div className="card-modern relative flex flex-col p-4 h-full bg-white group">
+        <div className="card-modern relative flex flex-col p-4 h-full group">
             {/* Priority Indicator Line */}
             <div className={`absolute left-0 top-4 bottom-4 w-1 rounded-r-md ${getPriorityColor(action.priority)}`} />
 
@@ -53,11 +53,11 @@ const ActionCard = ({ action, onStatusChange, onDelete }) => {
                 <div className="flex justify-between items-start mb-2">
                     <div className="flex flex-wrap gap-2">
                         {action.ritual && (
-                            <span className="text-[10px] font-semibold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">
+                            <span className="text-xxs font-semibold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">
                                 {action.ritual.name}
                             </span>
                         )}
-                        <span className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                        <span className="text-xxs font-semibold uppercase tracking-wider text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
                             {action.priority}
                         </span>
                     </div>

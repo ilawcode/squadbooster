@@ -33,7 +33,7 @@ const RitualCard = ({ ritual, onDelete }) => {
     const Icon = theme.icon;
 
     return (
-        <div className="card-modern p-5 flex flex-col h-full bg-white group">
+        <div className="card-modern p-5 flex flex-col h-full group">
             <div className="flex justify-between items-start mb-4">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center ${theme.bg} ${theme.color}`}>
                     <Icon sx={{ fontSize: 20 }} />
