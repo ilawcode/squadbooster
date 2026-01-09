@@ -185,38 +185,41 @@ const Actions = () => {
 
     return (
         <Layout>
-            <div className="max-w-7xl mx-auto h-full flex flex-col">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+            <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+                {/* Page Header */}
+                <div className="page-header">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-                            <ViewQuilt className="text-primary-600" sx={{ fontSize: 32 }} /> Aksiyonlar
+                        <h1 className="page-title">
+                            <ViewQuilt style={{ fontSize: 32, color: 'var(--primary)' }} />
+                            Aksiyonlar
                         </h1>
-                        <p className="text-gray-500 mt-1">Takımın hedeflerini ve görevlerini buradan takip et.</p>
+                        <p className="page-subtitle">Takımın hedeflerini ve görevlerini buradan takip et.</p>
                     </div>
-                    <div className="flex items-center gap-3 w-full md:w-auto">
-                        <div className="bg-gray-100 p-1 rounded-lg flex border border-gray-200">
+                    <div className="flex items-center gap-4">
+                        <div className="tabs">
                             <button
-                                className={`px-4 py-2 text-sm rounded-md transition-all font-medium ${filter === 'all' ? 'bg-white text-primary-700 shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+                                className={`tab ${filter === 'all' ? 'active' : ''}`}
                                 onClick={() => setFilter('all')}
                             >
                                 Tümü
                             </button>
                             <button
-                                className={`px-4 py-2 text-sm rounded-md transition-all font-medium ${filter === 'my' ? 'bg-white text-primary-700 shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+                                className={`tab ${filter === 'my' ? 'active' : ''}`}
                                 onClick={() => setFilter('my')}
                             >
                                 Bana Atananlar
                             </button>
                         </div>
-                        <button className="btn btn-primary shadow-lg shadow-primary-500/20 px-4 py-2.5 h-auto flex items-center gap-2" onClick={() => setShowModal(true)}>
-                            <Add sx={{ fontSize: 20 }} /> <span className="hidden md:inline">Yeni Görev</span>
+                        <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+                            <Add style={{ fontSize: 20 }} />
+                            <span>Yeni Görev</span>
                         </button>
                     </div>
                 </div>
 
                 {/* Kanban Board */}
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-                    <div className="kanban-board flex-1 min-h-[500px]">
+                    <div className="kanban-board">
                         <DroppableColumn id="todo" title="Yapılacaklar" count={todoActions.length} items={todoActions} icon={<FormatListBulleted sx={{ fontSize: 20 }} />} color="text-gray-600">
                             {todoActions.map(action => (
                                 <SortableItem key={action._id} id={action._id}>
@@ -225,7 +228,7 @@ const Actions = () => {
                             ))}
                         </DroppableColumn>
 
-                        <DroppableColumn id="in-progress" title="Sürüyor" count={inProgressActions.length} items={inProgressActions} icon={<PlayCircleOutline sx={{ fontSize: 20 }} className="text-blue-500" />} color="text-blue-600">
+                        <DroppableColumn id="in-progress" title="Sürüyor" count={inProgressActions.length} items={inProgressActions} icon={<PlayCircleOutline sx={{ fontSize: 20 }} style={{ color: 'var(--info)' }} />} color="text-blue-600">
                             {inProgressActions.map(action => (
                                 <SortableItem key={action._id} id={action._id}>
                                     <ActionCard action={action} onStatusChange={handleStatusChange} onDelete={handleDelete} />
@@ -233,7 +236,7 @@ const Actions = () => {
                             ))}
                         </DroppableColumn>
 
-                        <DroppableColumn id="done" title="Tamamlandı" count={doneActions.length} items={doneActions} icon={<CheckCircle sx={{ fontSize: 20 }} className="text-success-500" />} color="text-success-600">
+                        <DroppableColumn id="done" title="Tamamlandı" count={doneActions.length} items={doneActions} icon={<CheckCircle sx={{ fontSize: 20 }} style={{ color: 'var(--success)' }} />} color="text-success-600">
                             {doneActions.map(action => (
                                 <SortableItem key={action._id} id={action._id}>
                                     <ActionCard action={action} onStatusChange={handleStatusChange} onDelete={handleDelete} />
@@ -243,108 +246,109 @@ const Actions = () => {
                     </div>
                     <DragOverlay dropAnimation={dropAnimation}>
                         {activeAction ? (
-                            <div className="transform rotate-2 scale-105 opacity-90 cursor-grabbing">
+                            <div style={{ transform: 'rotate(2deg) scale(1.05)', opacity: 0.9 }}>
                                 <ActionCard action={activeAction} />
                             </div>
                         ) : null}
                     </DragOverlay>
                 </DndContext>
-                <div className="h-12"></div> {/* Bottom Spacer */}
             </div>
 
             {/* Create Action Modal */}
             {showModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setShowModal(false)}>
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-scaleIn flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
-                        <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50">
-                            <h3 className="text-xl font-bold flex items-center gap-2">
-                                <FormatListBulleted className="text-primary-500" /> Yeni Görev Ekle
+                <div className="modal-overlay" onClick={() => setShowModal(false)}>
+                    <div className="modal animate-slide-up" style={{ maxWidth: '520px' }} onClick={e => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h3 className="modal-title flex items-center gap-2">
+                                <FormatListBulleted style={{ fontSize: 24, color: 'var(--primary)' }} />
+                                Yeni Görev Ekle
                             </h3>
-                            <button onClick={() => setShowModal(false)} className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 rounded-full transition-all shadow-sm hover:shadow-md">
-                                <Close sx={{ fontSize: 20 }} />
+                            <button onClick={() => setShowModal(false)} className="btn btn-ghost btn-icon">
+                                <Close style={{ fontSize: 20 }} />
                             </button>
                         </div>
 
-                        <form onSubmit={handleCreateAction} className="overflow-y-auto p-6 space-y-5">
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-1.5">Başlık</label>
-                                <input
-                                    className="form-input w-full border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-100 focus:border-primary-500"
-                                    value={formData.title}
-                                    onChange={e => setFormData({ ...formData, title: e.target.value })}
-                                    placeholder="Görev adı..."
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-1.5">Açıklama</label>
-                                <textarea
-                                    className="form-input w-full border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-100 focus:border-primary-500 min-h-[100px]"
-                                    value={formData.description}
-                                    onChange={e => setFormData({ ...formData, description: e.target.value })}
-                                    placeholder="Detaylar..."
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Bitiş Tarihi</label>
+                        <form onSubmit={handleCreateAction}>
+                            <div className="modal-body">
+                                <div className="form-group">
+                                    <label className="form-label">Başlık</label>
                                     <input
-                                        type="datetime-local"
-                                        className="form-input w-full border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary-100 focus:border-primary-500"
-                                        value={formData.dueDate}
-                                        onChange={e => setFormData({ ...formData, dueDate: e.target.value })}
+                                        type="text"
+                                        className="form-input"
+                                        value={formData.title}
+                                        onChange={e => setFormData({ ...formData, title: e.target.value })}
+                                        placeholder="Görev adı..."
+                                        required
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Öncelik</label>
-                                    <select
-                                        className="form-select w-full border-gray-300 rounded-lg px-4 py-2.5"
-                                        value={formData.priority}
-                                        onChange={e => setFormData({ ...formData, priority: e.target.value })}
-                                    >
-                                        <option value="low">Düşük</option>
-                                        <option value="medium">Orta</option>
-                                        <option value="high">Yüksek</option>
-                                    </select>
-                                </div>
-                            </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-1.5">Atanan Kişi</label>
-                                    <div className="relative">
+                                <div className="form-group">
+                                    <label className="form-label">Açıklama</label>
+                                    <textarea
+                                        className="form-textarea"
+                                        value={formData.description}
+                                        onChange={e => setFormData({ ...formData, description: e.target.value })}
+                                        placeholder="Detaylar..."
+                                    />
+                                </div>
+
+                                <div className="grid-2">
+                                    <div className="form-group">
+                                        <label className="form-label">Bitiş Tarihi</label>
+                                        <input
+                                            type="datetime-local"
+                                            className="form-input"
+                                            value={formData.dueDate}
+                                            onChange={e => setFormData({ ...formData, dueDate: e.target.value })}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Öncelik</label>
                                         <select
-                                            className="form-select w-full border-gray-300 rounded-lg px-4 py-2.5 appearance-none"
+                                            className="form-select"
+                                            value={formData.priority}
+                                            onChange={e => setFormData({ ...formData, priority: e.target.value })}
+                                        >
+                                            <option value="low">Düşük</option>
+                                            <option value="medium">Orta</option>
+                                            <option value="high">Yüksek</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div className="grid-2">
+                                    <div className="form-group">
+                                        <label className="form-label">Atanan Kişi</label>
+                                        <select
+                                            className="form-select"
                                             value={formData.assignee}
                                             onChange={e => setFormData({ ...formData, assignee: e.target.value })}
                                         >
                                             <option value="">Seçiniz</option>
                                             {members.map(m => <option key={m._id} value={m._id}>{m.name}</option>)}
                                         </select>
-                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">▼</div>
                                     </div>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-bold text-gray-700 mb-1.5">İlgili Ritüel</label>
-                                    <div className="relative">
+                                    <div className="form-group">
+                                        <label className="form-label">İlgili Ritüel</label>
                                         <select
-                                            className="form-select w-full border-gray-300 rounded-lg px-4 py-2.5 appearance-none"
+                                            className="form-select"
                                             value={formData.ritual}
                                             onChange={e => setFormData({ ...formData, ritual: e.target.value })}
                                         >
                                             <option value="">Seçiniz</option>
                                             {rituals.map(r => <option key={r._id} value={r._id}>{r.name}</option>)}
                                         </select>
-                                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">▼</div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="pt-4 flex justify-end gap-3 border-t border-gray-100 mt-2">
-                                <button type="button" className="btn btn-ghost px-5 py-2.5 rounded-lg font-medium" onClick={() => setShowModal(false)}>İptal</button>
-                                <button type="submit" className="btn btn-primary px-6 py-2.5 rounded-lg shadow-lg shadow-primary-500/30 hover:shadow-primary-500/40 hover:-translate-y-0.5 transition-all">Görevi Oluştur</button>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
+                                    İptal
+                                </button>
+                                <button type="submit" className="btn btn-primary">
+                                    Görevi Oluştur
+                                </button>
                             </div>
                         </form>
                     </div>
