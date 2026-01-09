@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar, CheckCircle2, AlertCircle, Clock, Trash2, ChevronDown, Circle, ArrowRightCircle, PlayCircle } from 'lucide-react';
+import {
+    CalendarToday,
+    CheckCircle,
+    ErrorOutline,
+    AccessTime,
+    Delete,
+    KeyboardArrowDown,
+    RadioButtonUnchecked,
+    PlayCircleOutline,
+} from '@mui/icons-material';
 import { getDueDateLabel } from '../utils';
 import Avatar from './Avatar';
 
@@ -29,9 +38,9 @@ const ActionCard = ({ action, onStatusChange, onDelete }) => {
     };
 
     const statusConfig = {
-        'todo': { label: 'Yapılacak', color: 'bg-gray-100 text-gray-600', icon: Circle, border: 'border-gray-200' },
-        'in-progress': { label: 'Sürüyor', color: 'bg-blue-50 text-blue-600', icon: PlayCircle, border: 'border-blue-200' },
-        'done': { label: 'Tamamlandı', color: 'bg-success-50 text-success-600', icon: CheckCircle2, border: 'border-success-200' }
+        'todo': { label: 'Yapılacak', color: 'bg-gray-100 text-gray-600', icon: RadioButtonUnchecked, border: 'border-gray-200' },
+        'in-progress': { label: 'Sürüyor', color: 'bg-blue-50 text-blue-600', icon: PlayCircleOutline, border: 'border-blue-200' },
+        'done': { label: 'Tamamlandı', color: 'bg-success-50 text-success-600', icon: CheckCircle, border: 'border-success-200' }
     };
 
     const currentStatus = statusConfig[action.status] || statusConfig['todo'];
@@ -66,7 +75,7 @@ const ActionCard = ({ action, onStatusChange, onDelete }) => {
                         className="text-gray-300 hover:text-danger-600 hover:bg-danger-50 p-1.5 rounded-lg transition-all opacity-0 group-hover:opacity-100 transform hover:scale-105"
                         title="Aksiyonu Sil"
                     >
-                        <Trash2 size={16} />
+                        <Delete sx={{ fontSize: 18 }} />
                     </button>
                 )}
             </div>
@@ -89,7 +98,7 @@ const ActionCard = ({ action, onStatusChange, onDelete }) => {
                     )}
 
                     <div className={`flex items-center gap-1.5 text-xs font-medium ${dueDateInfo.color} px-2 py-1 rounded bg-opacity-10`}>
-                        <Clock size={14} />
+                        <AccessTime sx={{ fontSize: 16 }} />
                         <span>{dueDateInfo.text}</span>
                     </div>
                 </div>
@@ -100,9 +109,9 @@ const ActionCard = ({ action, onStatusChange, onDelete }) => {
                         onClick={(e) => { e.stopPropagation(); setIsMenuOpen(!isMenuOpen); }}
                         className={`flex items-center gap-1.5 pl-2 pr-1.5 py-1.5 rounded-lg text-xs font-bold border transition-all ${currentStatus.color} ${currentStatus.border} hover:opacity-80 active:scale-95`}
                     >
-                        <StatusIcon size={14} />
+                        <StatusIcon sx={{ fontSize: 16 }} />
                         <span>{currentStatus.label}</span>
-                        <ChevronDown size={14} className={`transition-transform duration-200 ${isMenuOpen ? 'rotate-180' : ''}`} />
+                        <KeyboardArrowDown sx={{ fontSize: 16 }} className={`transition-transform duration-200 ${isMenuOpen ? 'rotate-180' : ''}`} />
                     </button>
 
                     {isMenuOpen && (
@@ -116,7 +125,7 @@ const ActionCard = ({ action, onStatusChange, onDelete }) => {
                                             onClick={(e) => { e.stopPropagation(); handleStatusSelect(key); }}
                                             className={`w-full flex items-center gap-2 px-3 py-2 text-xs font-medium rounded-lg transition-colors ${action.status === key ? 'bg-primary-50 text-primary-700' : 'text-gray-600 hover:bg-gray-50'}`}
                                         >
-                                            <Icon size={14} className={action.status === key ? 'text-primary-600' : 'text-gray-400'} />
+                                            <Icon sx={{ fontSize: 16 }} className={action.status === key ? 'text-primary-600' : 'text-gray-400'} />
                                             {config.label}
                                         </button>
                                     );

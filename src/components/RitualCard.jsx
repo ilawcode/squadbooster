@@ -1,8 +1,18 @@
 import React from 'react';
-import { Calendar, Clock, MapPin, Users } from 'lucide-react';
+import {
+    CalendarToday,
+    AccessTime,
+    Delete,
+    EventNote,
+    RateReview,
+    RocketLaunch,
+    Today,
+    ContentCut,
+    MeetingRoom,
+    Notes
+} from '@mui/icons-material';
 import { formatDate } from '../utils';
 import Avatar from './Avatar';
-
 import { useNavigate } from 'react-router-dom';
 
 const RitualCard = ({ ritual, onDelete }) => {
@@ -10,98 +20,92 @@ const RitualCard = ({ ritual, onDelete }) => {
 
     const getTypeInfo = (type) => {
         switch (type) {
-            case 'planning': return { label: 'Planning', icon: 'planning', color: 'primary' };
-            case 'review': return { label: 'Review', icon: 'review', color: 'accent' };
-            case 'retro': return { label: 'Retrospective', icon: 'retro', color: 'success' };
-            case 'daily': return { label: 'Daily', icon: 'daily', color: 'info' };
-            case 'grooming': return { label: 'Grooming', icon: 'grooming', color: 'warning' };
-            default: return { label: 'Toplantı', icon: 'other', color: 'primary' };
+            case 'planning': return { label: 'Planning', icon: EventNote, color: 'primary' };
+            case 'review': return { label: 'Review', icon: RateReview, color: 'accent' };
+            case 'retro': return { label: 'Retrospective', icon: RocketLaunch, color: 'success' };
+            case 'daily': return { label: 'Daily', icon: Today, color: 'info' };
+            case 'grooming': return { label: 'Grooming', icon: ContentCut, color: 'warning' };
+            default: return { label: 'Toplantı', icon: MeetingRoom, color: 'primary' };
         }
     };
 
     const typeInfo = getTypeInfo(ritual.type);
-
-    // SVG icons for rituals
-    const Icons = {
-        planning: <path d="M3 3v18h18V3H3zm16 16H5V5h14v14zM11 7h2v2h-2V7zm0 4h2v2h-2v-2zm0 4h2v2h-2v-2z" fill="currentColor" />,
-        review: <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="currentColor" />,
-        retro: <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z" fill="currentColor" />,
-        daily: <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" fill="currentColor" />,
-        other: <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" fill="currentColor" />
-    };
+    const RitualIcon = typeInfo.icon;
 
     return (
-        <div className="ritual-card group relative">
-            <div className={`ritual-icon ${typeInfo.icon}`}>
-                <svg viewBox="0 0 24 24" width="24" height="24">
-                    {Icons[typeInfo.icon] || Icons.other}
-                </svg>
-            </div>
-
-            <div className="ritual-content">
-                <div className="flex justify-between items-start">
-                    <div>
-                        <span className={`badge badge-${typeInfo.color} mb-2`}>{typeInfo.label}</span>
-                        <h3 className="ritual-title text-lg">{ritual.name}</h3>
-                    </div>
-                    {onDelete && (
-                        <button
-                            onClick={() => onDelete(ritual._id)}
-                            className="text-muted hover:text-danger-500 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                            title="Sil"
-                        >
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="3 6 5 6 21 6"></polyline>
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                            </svg>
-                        </button>
-                    )}
+        <div className="ritual-card group relative bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all p-5">
+            <div className="flex gap-4">
+                {/* Icon Box */}
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-${typeInfo.color}-50 text-${typeInfo.color}-600`}>
+                    <RitualIcon sx={{ fontSize: 24 }} />
                 </div>
 
-                {ritual.description && (
-                    <p className="text-muted mb-4">{ritual.description}</p>
-                )}
-
-                <div className="ritual-meta flex-wrap items-center">
-                    <div className="flex items-center gap-1 mr-4">
-                        <Calendar size={16} />
-                        <span>{formatDate(ritual.date)}</span>
-                    </div>
-                    <div className="flex items-center gap-1 mr-auto">
-                        <Clock size={16} />
-                        <span>{ritual.duration} dk</span>
-                    </div>
-
-                    {ritual.type === 'retro' ? (
-                        <button
-                            onClick={() => navigate(`/retro/${ritual._id}`)}
-                            className="btn btn-sm btn-accent py-1.5 px-3 mr-4 shadow-md hover:shadow-lg transition-all flex items-center gap-1.5 font-medium"
-                        >
-                            <span>🚀</span> Retro Başlat
-                        </button>
-                    ) : (
-                        <button
-                            onClick={() => navigate(`/retro/${ritual._id}`)}
-                            className="btn btn-sm btn-secondary py-1 px-3 mr-4 shadow-sm flex items-center gap-1.5"
-                        >
-                            <span>📝</span> Notlar
-                        </button>
-                    )}
-
-                    {ritual.participants && ritual.participants.length > 0 && (
-                        <div className="flex items-center gap-2 ml-auto">
-                            <div className="avatar-group">
-                                {ritual.participants.slice(0, 3).map((p) => (
-                                    <Avatar key={p._id} name={p.name} color={p.color} size="sm" />
-                                ))}
-                                {ritual.participants.length > 3 && (
-                                    <div className="avatar avatar-sm bg-bg-tertiary text-muted border-2 border-white">
-                                        +{ritual.participants.length - 3}
-                                    </div>
-                                )}
-                            </div>
+                <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start mb-2">
+                        <div>
+                            <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider mb-1 bg-${typeInfo.color}-50 text-${typeInfo.color}-700 border border-${typeInfo.color}-100`}>
+                                {typeInfo.label}
+                            </span>
+                            <h3 className="text-lg font-bold text-gray-900 truncate" title={ritual.name}>{ritual.name}</h3>
                         </div>
+                        {onDelete && (
+                            <button
+                                onClick={(e) => { e.stopPropagation(); onDelete(ritual._id); }}
+                                className="text-gray-300 hover:text-danger-600 hover:bg-danger-50 p-1.5 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                                title="Sil"
+                            >
+                                <Delete sx={{ fontSize: 18 }} />
+                            </button>
+                        )}
+                    </div>
+
+                    {ritual.description && (
+                        <p className="text-sm text-gray-500 mb-4 line-clamp-2">{ritual.description}</p>
                     )}
+
+                    <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                        <div className="flex items-center gap-1.5">
+                            <CalendarToday sx={{ fontSize: 16 }} />
+                            <span>{formatDate(ritual.date)}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <AccessTime sx={{ fontSize: 16 }} />
+                            <span>{ritual.duration} dk</span>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-50">
+                        <div className="flex -space-x-2 overflow-hidden">
+                            {ritual.participants && ritual.participants.slice(0, 4).map((p) => (
+                                <div key={p._id} className="inline-block ring-2 ring-white rounded-full">
+                                    <Avatar name={p.name} color={p.color} size="sm" />
+                                </div>
+                            ))}
+                            {ritual.participants && ritual.participants.length > 4 && (
+                                <div className="w-8 h-8 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center text-xs font-medium text-gray-500">
+                                    +{ritual.participants.length - 4}
+                                </div>
+                            )}
+                        </div>
+
+                        {ritual.type === 'retro' ? (
+                            <button
+                                onClick={() => navigate(`/retro/${ritual._id}`)}
+                                className="btn btn-sm bg-indigo-600 hover:bg-indigo-700 text-white py-1.5 px-3.5 rounded-lg shadow-sm hover:shadow flex items-center gap-1.5 font-medium transition-all"
+                            >
+                                <RocketLaunch sx={{ fontSize: 16 }} />
+                                <span>Başlat</span>
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => navigate(`/retro/${ritual._id}`)}
+                                className="btn btn-sm bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 py-1.5 px-3.5 rounded-lg flex items-center gap-1.5 font-medium transition-all"
+                            >
+                                <Notes sx={{ fontSize: 16 }} />
+                                <span>Notlar</span>
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

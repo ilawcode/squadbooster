@@ -4,7 +4,20 @@ import { api } from '../utils';
 import { useAuth } from '../context/AuthContext';
 import Layout from '../components/Layout';
 import Avatar from '../components/Avatar';
-import { Plus, ThumbsUp, MessageSquare, ArrowRight, Check, Layers, Trash2, Calendar, GripVertical, X, Clock, AlertCircle } from 'lucide-react';
+import {
+    Add,
+    ThumbUp,
+    ChatBubbleOutline,
+    ArrowForward,
+    Check,
+    Layers,
+    Delete,
+    CalendarToday,
+    DragIndicator,
+    Close,
+    AccessTime,
+    ErrorOutline
+} from '@mui/icons-material';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragOverlay } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -33,7 +46,7 @@ const SortableItem = ({ id, card, onVote, step, onDelete, currentUser }) => {
         >
             {step === 'group' && (
                 <div className="mt-1 text-muted cursor-grab active:cursor-grabbing" {...attributes} {...listeners}>
-                    <GripVertical size={16} />
+                    <DragIndicator sx={{ fontSize: 16 }} />
                 </div>
             )}
 
@@ -61,7 +74,7 @@ const SortableItem = ({ id, card, onVote, step, onDelete, currentUser }) => {
                             className="p-2 text-danger-600 bg-danger-50 hover:bg-danger-100 hover:text-danger-700 rounded-lg transition-all opacity-0 group-hover:opacity-100 shadow-sm hover:shadow-md transform hover:scale-105"
                             title="Kartı Sil"
                         >
-                            <Trash2 size={15} />
+                            <Delete sx={{ fontSize: 15 }} />
                         </button>
                     )}
                 </div>
@@ -74,11 +87,11 @@ const SortableItem = ({ id, card, onVote, step, onDelete, currentUser }) => {
                         onVote(card._id);
                     }}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold transition-all transform active:scale-95 ml-2 ${card.isVoted
-                        ? 'bg-primary-100 text-primary-700 shadow-inner ring-1 ring-primary-200'
-                        : 'bg-bg-tertiary text-text-secondary hover:bg-border-light'
+                            ? 'bg-primary-100 text-primary-700 shadow-inner ring-1 ring-primary-200'
+                            : 'bg-bg-tertiary text-text-secondary hover:bg-border-light'
                         }`}
                 >
-                    <ThumbsUp size={14} className={card.isVoted ? 'fill-current' : ''} />
+                    <ThumbUp sx={{ fontSize: 14 }} className={card.isVoted ? 'fill-current' : ''} />
                     <span>{card.votes.length}</span>
                 </button>
             )}
@@ -228,7 +241,7 @@ const RetroActive = () => {
                             <h1 className="text-2xl font-bold text-text-primary">{ritual.name}</h1>
                         </div>
                         <div className="flex items-center gap-4 text-sm text-muted font-medium">
-                            <span className="flex items-center gap-1.5"><Calendar size={16} /> {new Date(ritual.date).toLocaleDateString()}</span>
+                            <span className="flex items-center gap-1.5"><CalendarToday sx={{ fontSize: 16 }} /> {new Date(ritual.date).toLocaleDateString()}</span>
                             <span className="w-1 h-1 bg-border-medium rounded-full"></span>
                             <span>{cards.length} Fikir</span>
                         </div>
@@ -237,17 +250,17 @@ const RetroActive = () => {
                     <div className="flex items-center gap-3 w-full md:w-auto">
                         {ritual.retroStep === 'input' && (
                             <button onClick={() => handleStepChange('group')} className="btn btn-primary w-full md:w-auto shadow-lg shadow-primary-500/20">
-                                Gruplamaya Geç <ArrowRight size={18} />
+                                Gruplamaya Geç <ArrowForward sx={{ fontSize: 18 }} />
                             </button>
                         )}
                         {ritual.retroStep === 'group' && (
                             <button onClick={() => handleStepChange('vote')} className="btn btn-warning w-full md:w-auto shadow-lg shadow-warning-500/20 text-white">
-                                Oylamaya Geç <ArrowRight size={18} />
+                                Oylamaya Geç <ArrowForward sx={{ fontSize: 18 }} />
                             </button>
                         )}
                         {ritual.retroStep === 'vote' && (
                             <button onClick={() => handleStepChange('completed')} className="btn btn-success w-full md:w-auto shadow-lg shadow-success-500/20">
-                                Sonuçları Gör <Check size={18} />
+                                Sonuçları Gör <Check sx={{ fontSize: 18 }} />
                             </button>
                         )}
                     </div>
@@ -258,7 +271,7 @@ const RetroActive = () => {
                     <div className="card p-8 border-2 border-primary-100 shadow-xl relative overflow-hidden bg-white animate-scaleIn">
                         <div className="absolute top-0 left-0 w-2 h-full bg-primary-500"></div>
                         <h3 className="text-xl font-bold mb-6 flex items-center gap-2 text-primary-900">
-                            <MessageSquare className="text-primary-500" />
+                            <ChatBubbleOutline className="text-primary-500" />
                             Aklındakileri Paylaş
                         </h3>
                         <form onSubmit={handleAddCard} className="max-w-3xl">
@@ -288,7 +301,7 @@ const RetroActive = () => {
                                     autoFocus
                                 />
                                 <button type="submit" className="btn btn-primary h-12 px-6 shadow-md hover:scale-105 transition-transform">
-                                    <Plus size={20} /> Ekle
+                                    <Add sx={{ fontSize: 20 }} /> Ekle
                                 </button>
                             </div>
                         </form>
@@ -367,7 +380,7 @@ const RetroActive = () => {
                 {ritual.retroStep === 'completed' && (
                     <div className="space-y-6 animate-fadeIn pb-12">
                         <div className="flex items-center gap-3 mb-6 p-4 bg-primary-50 rounded-xl border border-primary-100">
-                            <Layers className="text-primary-600" size={24} />
+                            <Layers className="text-primary-600" sx={{ fontSize: 24 }} />
                             <h2 className="text-xl font-bold text-primary-900">Sonuçlar ve Aksiyonlar</h2>
                         </div>
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -389,7 +402,7 @@ const RetroActive = () => {
                                         onClick={() => { setActionForm({ ...actionForm, title: card.content }); setActionModal(card._id); }}
                                         className="btn btn-secondary w-full hover:bg-primary-50 hover:text-primary-600 transition-colors"
                                     >
-                                        <Layers size={14} className="mr-2" /> Aksiyon Oluştur
+                                        <Layers sx={{ fontSize: 14 }} className="mr-2" /> Aksiyon Oluştur
                                     </button>
                                 </div>
                             ))}
@@ -407,7 +420,7 @@ const RetroActive = () => {
                                 <Layers className="text-primary-500" /> Aksiyon Oluştur
                             </h3>
                             <button onClick={() => setActionModal(null)} className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 rounded-full transition-all shadow-sm hover:shadow-md">
-                                <X size={20} />
+                                <Close sx={{ fontSize: 20 }} />
                             </button>
                         </div>
 

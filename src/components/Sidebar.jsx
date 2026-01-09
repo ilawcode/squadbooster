@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { LayoutDashboard, CheckSquare, Calendar, Users, LogOut, Menu, X, Rocket } from 'lucide-react';
+import {
+    Dashboard,
+    FactCheck,
+    CalendarToday,
+    People,
+    Logout,
+    Menu,
+    Close,
+    RocketLaunch
+} from '@mui/icons-material';
 
 const Sidebar = () => {
     const { user, logout } = useAuth();
@@ -21,10 +30,10 @@ const Sidebar = () => {
     };
 
     const navItems = [
-        { icon: <LayoutDashboard size={20} />, label: 'Dashboard', path: '/' },
-        { icon: <CheckSquare size={20} />, label: 'Aksiyonlar', path: '/actions' },
-        { icon: <Calendar size={20} />, label: 'Ritüeller', path: '/rituals' },
-        { icon: <Users size={20} />, label: 'Takım', path: '/team' },
+        { icon: <Dashboard sx={{ fontSize: 20 }} />, label: 'Dashboard', path: '/' },
+        { icon: <FactCheck sx={{ fontSize: 20 }} />, label: 'Aksiyonlar', path: '/actions' },
+        { icon: <CalendarToday sx={{ fontSize: 20 }} />, label: 'Ritüeller', path: '/rituals' },
+        { icon: <People sx={{ fontSize: 20 }} />, label: 'Takım', path: '/team' },
     ];
 
     const currentPath = window.location.pathname;
@@ -35,14 +44,14 @@ const Sidebar = () => {
                 className="btn btn-icon btn-ghost md:hidden fixed top-4 right-4 z-50"
                 onClick={toggleSidebar}
             >
-                {isOpen ? <X size={24} /> : <Menu size={24} />}
+                {isOpen ? <Close sx={{ fontSize: 24 }} /> : <Menu sx={{ fontSize: 24 }} />}
             </button>
 
             <div className={`sidebar ${isOpen ? 'open' : ''}`}>
                 <div className="sidebar-header">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white shadow-glow">
-                            <Rocket size={24} />
+                            <RocketLaunch sx={{ fontSize: 24 }} />
                         </div>
                         <div>
                             <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-accent-600">
@@ -83,7 +92,7 @@ const Sidebar = () => {
                         className="btn btn-ghost w-full justify-start text-danger-500 hover:text-danger-600 hover:bg-danger-50"
                         onClick={handleLogout}
                     >
-                        <LogOut size={18} />
+                        <Logout sx={{ fontSize: 18 }} />
                         <span>Çıkış Yap</span>
                     </button>
                 </div>

@@ -3,7 +3,16 @@ import { api } from '../utils';
 import { useAuth } from '../context/AuthContext';
 import Layout from '../components/Layout';
 import ActionCard from '../components/ActionCard';
-import { Plus, Search, Filter, X, LayoutTemplate, ListTodo, CheckCircle2, Clock, PlayCircle } from 'lucide-react';
+import {
+    Add,
+    Search,
+    FilterList,
+    Close,
+    ViewQuilt,
+    FormatListBulleted,
+    CheckCircle,
+    PlayCircleOutline
+} from '@mui/icons-material';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragOverlay, defaultDropAnimationSideEffects } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -180,7 +189,7 @@ const Actions = () => {
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-                            <LayoutTemplate className="text-primary-600" /> Aksiyonlar
+                            <ViewQuilt className="text-primary-600" sx={{ fontSize: 32 }} /> Aksiyonlar
                         </h1>
                         <p className="text-gray-500 mt-1">Takımın hedeflerini ve görevlerini buradan takip et.</p>
                     </div>
@@ -200,7 +209,7 @@ const Actions = () => {
                             </button>
                         </div>
                         <button className="btn btn-primary shadow-lg shadow-primary-500/20 px-4 py-2.5 h-auto flex items-center gap-2" onClick={() => setShowModal(true)}>
-                            <Plus size={18} strokeWidth={2.5} /> <span className="hidden md:inline">Yeni Görev</span>
+                            <Add sx={{ fontSize: 20 }} /> <span className="hidden md:inline">Yeni Görev</span>
                         </button>
                     </div>
                 </div>
@@ -208,7 +217,7 @@ const Actions = () => {
                 {/* Kanban Board */}
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
                     <div className="grid md:grid-cols-3 gap-6 flex-1 min-h-[500px]">
-                        <DroppableColumn id="todo" title="Yapılacaklar" count={todoActions.length} items={todoActions} icon={<ListTodo size={20} />} color="text-gray-600">
+                        <DroppableColumn id="todo" title="Yapılacaklar" count={todoActions.length} items={todoActions} icon={<FormatListBulleted sx={{ fontSize: 20 }} />} color="text-gray-600">
                             {todoActions.map(action => (
                                 <SortableItem key={action._id} id={action._id}>
                                     <ActionCard action={action} onStatusChange={handleStatusChange} onDelete={handleDelete} />
@@ -216,7 +225,7 @@ const Actions = () => {
                             ))}
                         </DroppableColumn>
 
-                        <DroppableColumn id="in-progress" title="Sürüyor" count={inProgressActions.length} items={inProgressActions} icon={<PlayCircle size={20} className="text-blue-500" />} color="text-blue-600">
+                        <DroppableColumn id="in-progress" title="Sürüyor" count={inProgressActions.length} items={inProgressActions} icon={<PlayCircleOutline sx={{ fontSize: 20 }} className="text-blue-500" />} color="text-blue-600">
                             {inProgressActions.map(action => (
                                 <SortableItem key={action._id} id={action._id}>
                                     <ActionCard action={action} onStatusChange={handleStatusChange} onDelete={handleDelete} />
@@ -224,7 +233,7 @@ const Actions = () => {
                             ))}
                         </DroppableColumn>
 
-                        <DroppableColumn id="done" title="Tamamlandı" count={doneActions.length} items={doneActions} icon={<CheckCircle2 size={20} className="text-success-500" />} color="text-success-600">
+                        <DroppableColumn id="done" title="Tamamlandı" count={doneActions.length} items={doneActions} icon={<CheckCircle sx={{ fontSize: 20 }} className="text-success-500" />} color="text-success-600">
                             {doneActions.map(action => (
                                 <SortableItem key={action._id} id={action._id}>
                                     <ActionCard action={action} onStatusChange={handleStatusChange} onDelete={handleDelete} />
@@ -249,10 +258,10 @@ const Actions = () => {
                     <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-scaleIn flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
                         <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50">
                             <h3 className="text-xl font-bold flex items-center gap-2">
-                                <ListTodo className="text-primary-500" /> Yeni Görev Ekle
+                                <FormatListBulleted className="text-primary-500" /> Yeni Görev Ekle
                             </h3>
                             <button onClick={() => setShowModal(false)} className="p-2 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 rounded-full transition-all shadow-sm hover:shadow-md">
-                                <X size={20} />
+                                <Close sx={{ fontSize: 20 }} />
                             </button>
                         </div>
 
